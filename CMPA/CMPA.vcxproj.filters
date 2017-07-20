@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Sensors">
+      <UniqueIdentifier>{87d96851-d5b8-4c4e-b90f-54848eb28c23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Sensors">
+      <UniqueIdentifier>{a3a3146c-4e13-41b7-a349-a75e4b7bce70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="CMPA.ino" />
@@ -21,5 +27,13 @@
     <ClInclude Include="__vm\.CMPA.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LDR.h">
+      <Filter>Header Files\Sensors</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="LDR.cpp">
+      <Filter>Source Files\Sensors</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
