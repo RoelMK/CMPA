@@ -25,7 +25,6 @@ int LDR::Update(unsigned long time)
 			{
 				return LDR_SENSOR_FAILURE;			// Multiple sensors detect projectile
 			}
-			
 		}
 		else
 		{

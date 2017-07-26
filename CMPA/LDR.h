@@ -9,12 +9,12 @@
 	#include "WProgram.h"
 #endif
 
-#define sensorCount 1
-#define detectObjectThreshold 800
+#define sensorCount 1							// Begin analog A0 (1=A0, 2=A0,A1)
+#define detectObjectThreshold 800				// Analog read value threshold (< = detection, > = no detection)
 #define distanceBetweenSensors 0.1				// In meters
 #define distanceBetweenSensorAndNextCoil 0.09	// In meters
-#define LDR_SENSOR_OK -1
-#define LDR_SENSOR_FAILURE -2
+#define LDR_SENSOR_OK -1						// Sensors OK, no projectile found
+#define LDR_SENSOR_FAILURE -2					// Sensors not OK 
 
 class LDR
 {

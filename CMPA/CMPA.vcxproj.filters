@@ -30,9 +30,15 @@
     <ClInclude Include="LDR.h">
       <Filter>Header Files\Sensors</Filter>
     </ClInclude>
+    <ClInclude Include="MOSFET.h">
+      <Filter>Header Files\Sensors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LDR.cpp">
+      <Filter>Source Files\Sensors</Filter>
+    </ClCompile>
+    <ClCompile Include="MOSFET.cpp">
       <Filter>Source Files\Sensors</Filter>
     </ClCompile>
   </ItemGroup>
