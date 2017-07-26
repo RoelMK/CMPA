@@ -243,3 +243,6 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/CMPA/__vm/Compile.vmps.xml
+/CMPA/__vm/Configuration.Debug.vmps.xml
+/CMPA/__vm/Upload.vmps.xml
