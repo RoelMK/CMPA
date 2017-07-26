@@ -11,7 +11,8 @@ int LDR::Update(unsigned long time)
 	// Read analog data
 	for (int sensor = 0; sensor < sensorCount; sensor++)
 	{
-		int data = analogRead(sensor);		// Read analog value
+		int data = analogRead(sensor);		// Read analog value		
+		Serial.println(data);
 		if (data < detectObjectThreshold)	// Is light dimmed?
 		{
 			if (!sensorDetected)
@@ -32,18 +33,17 @@ int LDR::Update(unsigned long time)
 		}
 	}
 
-	// Calculate
+	// Calculate & return
 	if (sensorDetected)
 	{
 		Calc(true, time);
+		return lastSensorDetected;
 	}
 	else
 	{
 		Calc(false, time);
+		return LDR_SENSOR_OK;
 	}
-
-	// Return
-	return LDR_SENSOR_OK;
 }
 
 void LDR::Calc(bool detectedProjectile, unsigned long time)
@@ -66,4 +66,15 @@ void LDR::Calc(bool detectedProjectile, unsigned long time)
 		distanceTraveled = speed * timePassed;	// Calculate distance traveled
 		timeRequiredToReachNextCoil = (distanceBetweenSensorAndNextCoil - distanceTraveled) / speed;
 	}
+}
+
+void LDR::Reset()
+{
+	previousTime = 0;
+	timeRequiredToReachNextSensor = 0;
+	timeRequiredToReachNextCoil = 0;
+	distanceTraveled = 0;
+	lastSensorDetectionTime = 0;
+	lastSensorDetected = 0;
+	speed = 0;
 }

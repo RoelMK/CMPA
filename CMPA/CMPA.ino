@@ -11,11 +11,29 @@
 LDR ldr;
 #pragma endregion
 
+#pragma region Data
+int LDRStatus;
+#pragma endregion
+
 void setup() {
 	Serial.begin(9600);
 }
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-	ldr.Update(millis());
+	// Update LDR
+	LDRStatus = ldr.Update(millis());
+	if (LDRStatus != LDR_SENSOR_FAILURE)
+	{
+		Serial.println(LDRStatus);
+		Serial.println(ldr.getSpeed());
+
+
+		delay(10);
+	}
+	else
+	{
+		Serial.println("[CRITICAL] LDR failure");
+		delay(1000);
+	}
 }

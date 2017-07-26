@@ -13,8 +13,8 @@
 #define detectObjectThreshold 800
 #define distanceBetweenSensors 0.1				// In meters
 #define distanceBetweenSensorAndNextCoil 0.09	// In meters
-#define LDR_SENSOR_OK 0
-#define LDR_SENSOR_FAILURE -1 
+#define LDR_SENSOR_OK -1
+#define LDR_SENSOR_FAILURE -2
 
 class LDR
 {
@@ -28,6 +28,7 @@ public:
 		return this->timeRequiredToReachNextCoil;
 	}
 	int Update(unsigned long time);			// Update all sensor data
+	void Reset();							// Reset all data
 
 private:
 	void Calc(bool detectedProjectile, unsigned long time);		// Calculate data
