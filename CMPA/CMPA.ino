@@ -7,6 +7,11 @@
 #include "MOSFET.h"
 #include "LDR.h"
 
+#define SERIAL_RATE 115200	// Serial communiciation bit
+#define DELAY 150			// Delay (microseconds)
+const bool debug = false;	// In debug mode? (execute special loop code)
+
+
 #pragma region Objects
 LDR ldr;
 MOSFET fet;
@@ -16,14 +21,13 @@ MOSFET fet;
 bool panic = false;			// In panic mode?
 #pragma endregion
 
-const bool debug = true;	// In debug mode? (execute special loop code)
 
 // The setup function runs once when you press reset or power the board
 void setup() 
 {
-	Serial.begin(9600);		// Init serial
-	//fet.Init();				// Init FETs
-	pinMode(3, OUTPUT);
+	Serial.begin(SERIAL_RATE);		// Init serial
+	ldr.Init();				// Init LDRs
+	fet.Init();				// Init FETs
 }
 
 // The loop function runs over and over again until power down or reset
@@ -32,18 +36,31 @@ void loop()
 	if (!panic && !debug)		// Do not continue if in panic mode
 	{
 		int LDRStatus = ldr.Update(millis());		// Update LDR state
+		Serial.print("  >> Status: ");
+		Serial.println(LDRStatus);
+		Serial.print("  >> Speed: ");
+		Serial.println(ldr.getSpeed());
 		if (LDRStatus != LDR_SENSOR_FAILURE)
 		{
-			//Serial.println(LDRStatus);
-			//Serial.println(ldr.getSpeed());
 			int FETStatus = fet.Update(LDRStatus, millis(), ldr.getSpeed());	// Update FETs
 			if (FETStatus != FET_OK)
 			{
-				Panic("[CRITICAL] FET failure");
+				switch (FETStatus)
+				{
+				case CRITICAL_FET_POWER_ERROR:
+					Panic("[CRITICAL] FET power failure");
+					break;
+				case CRITICAL_FET_SELECTION_ERROR:
+					Panic("[CRITICAL] FET selection failure");
+					break;
+				default:
+					Panic("[CRITICAL] FET unknown failure");
+					break;
+				}
 			}
 			else
 			{
-				delay(10);
+				delayMicroseconds(DELAY);
 			}
 		}
 		else
@@ -54,11 +71,6 @@ void loop()
 	else if(debug)
 	{
 		// Debug code here
-		digitalWrite(3, HIGH);
-		Serial.println("HIGH");
-		delay(1000);
-		digitalWrite(3, LOW);
-		Serial.println("LOW");
 		delay(1000);
 	}
 	else

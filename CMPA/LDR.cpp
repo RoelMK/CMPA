@@ -4,6 +4,39 @@
 
 #include "LDR.h"
 
+void LDR::Init()
+{
+	Serial.println("Calibrating LDRs...");
+	bool failure = false;
+	for (int sensor = 0; sensor < sensorCount; sensor++)
+	{
+		int data = analogRead(sensor);						// Read value
+		sensorObjectDetectionThreshold[sensor] = data - differenceBetweenLightAndDarkForLDR;		// Set value
+		if (sensor > 0)
+		{
+			if (abs(sensorObjectDetectionThreshold[sensor] - sensorObjectDetectionThreshold[sensor - 1]) > calibrateDifferenceWarningThreshold)
+			{
+				failure = true;
+			}
+		}
+
+		// Print value
+		Serial.print("LDR");
+		Serial.print(sensor);
+		Serial.print(" calibrated value: ");
+		Serial.println(data);
+	}
+
+	if (failure)
+	{
+		Serial.println("");
+		Serial.println("WARNING: LDR calibration failure detected, give any input to continue...");
+		while (!Serial.available()) {}
+	}
+
+	Serial.println("...ready!");
+}
+
 int LDR::Update(unsigned long time)
 {
 	bool sensorDetected = false;
@@ -11,9 +44,12 @@ int LDR::Update(unsigned long time)
 	// Read analog data
 	for (int sensor = 0; sensor < sensorCount; sensor++)
 	{
-		int data = analogRead(sensor);		// Read analog value		
+		int data = analogRead(sensor);		// Read analog value	
+		Serial.print("LDR");
+		Serial.print(sensor);
+		Serial.print(" reading: ");
 		Serial.println(data);
-		if (data < detectObjectThreshold)	// Is light dimmed?
+		if (data < sensorObjectDetectionThreshold[sensor])	// Is light dimmed?
 		{
 			if (!sensorDetected)
 			{

@@ -11,13 +11,15 @@
 
 #include "LDR.h"
 
-#define FirstFETpin 10
-#define LastFETpin 11
+#define FirstFETpin 2
+#define LastFETpin 5
 
 #define NoFETsON -1
-#define DistanceBetweenLDRAndCoil 0.005	// in m
+#define DistanceBetweenLDRAndCoil 0.065	// in m
+#define maxFETPoweredTime 1000	// Max time a FET is allowed to be powered on (in ms)
 
-#define CRITICAL_FET_ERROR -1
+#define CRITICAL_FET_POWER_ERROR -2
+#define CRITICAL_FET_SELECTION_ERROR -1
 #define FET_OK 1
 
 class MOSFET
