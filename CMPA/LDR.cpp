@@ -30,7 +30,7 @@ void LDR::Init()
 	if (failure)
 	{
 		Serial.println("");
-		Serial.println("WARNING: LDR calibration failure detected, give any input to continue...");
+		Serial.println("WARNING: LDR calibration failure detected, waiting for serial input...");
 		while (!Serial.available()) {}
 	}
 
@@ -39,23 +39,23 @@ void LDR::Init()
 
 int LDR::Update(unsigned long time)
 {
-	bool sensorDetected = false;
+	bool detectedProjectile = false;
 
 	// Read analog data
 	for (int sensor = 0; sensor < sensorCount; sensor++)
 	{
 		int data = analogRead(sensor);		// Read analog value	
-		Serial.print("LDR");
-		Serial.print(sensor);
-		Serial.print(" reading: ");
-		Serial.println(data);
+		//Serial.print("LDR");
+		//Serial.print(sensor);
+		//Serial.print(" reading: ");
+		//Serial.println(data);
 		if (data < sensorObjectDetectionThreshold[sensor])	// Is light dimmed?
 		{
-			if (!sensorDetected)
+			if (!detectedProjectile)
 			{
-				sensorDetected = true;
+				detectedProjectile = true;
 				sensorObjectDetection[sensor] = true;	// Yes: object detected
-				lastSensorDetected = sensor;			// Set last sensor detection
+				sensorDetected = sensor;			// Set last sensor detection
 			}
 			else
 			{
@@ -69,10 +69,10 @@ int LDR::Update(unsigned long time)
 	}
 
 	// Calculate & return
-	if (sensorDetected)
+	if (detectedProjectile)
 	{
 		Calc(true, time);
-		return lastSensorDetected;
+		return sensorDetected;
 	}
 	else
 	{
@@ -90,16 +90,24 @@ void LDR::Calc(bool detectedProjectile, unsigned long time)
 	// Calculate
 	if (detectedProjectile)
 	{
-		timeRequiredToReachNextSensor = time - lastSensorDetectionTime;		// Calculate time passed
-		lastSensorDetectionTime = time;										// Set detection time
-		speed = timeRequiredToReachNextSensor / distanceBetweenSensors;		// Calculate speed
-		distanceTraveled = 0;												// Reset distance
-		timeRequiredToReachNextCoil = distanceBetweenSensorAndNextCoil / speed;		// Reset time
+		timeSensorOn += timePassed;
+
+		if (sensorDetected != previousSensorDetected)
+		{
+			timeRequiredToReachNextSensor = time - lastSensorDetectionTime;		// Calculate time passed
+			lastSensorDetectionTime = time;										// Set detection time
+			speedV1 = distanceBetweenSensors / (timeRequiredToReachNextSensor / 1000);		// Calculate speed
+		}
+		
+		previousSensorDetected = sensorDetected;
 	}
 	else
 	{
-		distanceTraveled = speed * timePassed;	// Calculate distance traveled
-		timeRequiredToReachNextCoil = (distanceBetweenSensorAndNextCoil - distanceTraveled) / speed;
+		if (timeSensorOn != 0)					// Calculate high accuracy speed
+		{
+			speedV2 = LDRlength / ((double)timeSensorOn / 1000);
+			timeSensorOn = 0;
+		}
 	}
 }
 
@@ -107,9 +115,9 @@ void LDR::Reset()
 {
 	previousTime = 0;
 	timeRequiredToReachNextSensor = 0;
-	timeRequiredToReachNextCoil = 0;
-	distanceTraveled = 0;
 	lastSensorDetectionTime = 0;
-	lastSensorDetected = 0;
-	speed = 0;
+	sensorDetected = 0;
+	speedV1 = 0;
+	timeSensorOn = 0;
+	speedV2 = 0;
 }
