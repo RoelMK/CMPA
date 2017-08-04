@@ -34,7 +34,16 @@ int MOSFET::Update(int LDRState, unsigned long time, double speed)
 				return CRITICAL_FET_POWER_ERROR;
 			}
 			// Is time waited longer than threshold?
-			if ((timeWaited / 1000) > (DistanceBetweenLDRAndCoil / speed))
+			if (speed != 0)
+			{
+				if ((timeWaited / 1000) > (DistanceBetweenLDRAndCoil / speed))
+				{
+					SwitchFET(fetON, LOW);	// Turn off FET
+					fetON = NoFETsON;
+					timeWaited = 0;
+				}
+			}
+			else
 			{
 				SwitchFET(fetON, LOW);	// Turn off FET
 				fetON = NoFETsON;
