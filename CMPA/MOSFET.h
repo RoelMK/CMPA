@@ -15,8 +15,8 @@
 #define LastFETpin 5
 
 #define NoFETsON -1
-#define DistanceBetweenLDRAndCoil 0.07	// in m
-#define maxFETPoweredTime 10	// Max time a FET is allowed to be powered on (in ms)
+#define DistanceBetweenLDRAndCoil 0.015	// in m
+#define maxFETPoweredTime 10000	// Max time a FET is allowed to be powered on (in ms)
 
 #define CRITICAL_FET_POWER_ERROR -2
 #define CRITICAL_FET_SELECTION_ERROR -1

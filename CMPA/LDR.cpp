@@ -45,17 +45,16 @@ int LDR::Update(unsigned long time)
 	for (int sensor = 0; sensor < sensorCount; sensor++)
 	{
 		int data = analogRead(sensor);		// Read analog value	
-		//Serial.print("LDR");
-		//Serial.print(sensor);
-		//Serial.print(" reading: ");
-		//Serial.println(data);
+		
 		if (data < sensorObjectDetectionThreshold[sensor])	// Is light dimmed?
 		{
+			Serial.println(sensorObjectDetectionThreshold[sensor] - data);
 			if (!detectedProjectile)
 			{
 				detectedProjectile = true;
 				sensorObjectDetection[sensor] = true;	// Yes: object detected
 				sensorDetected = sensor;			// Set last sensor detection
+				
 			}
 			else
 			{
@@ -94,9 +93,14 @@ void LDR::Calc(bool detectedProjectile, unsigned long time)
 
 		if (sensorDetected != previousSensorDetected)
 		{
+			Serial.print("DETECTED: ");
+			Serial.println(sensorDetected);
+
 			timeRequiredToReachNextSensor = time - lastSensorDetectionTime;		// Calculate time passed
 			lastSensorDetectionTime = time;										// Set detection time
-			speedV1 = distanceBetweenSensors / (timeRequiredToReachNextSensor / 1000);		// Calculate speed
+			inRuntimeCalibration(previousSensorDetected);		// Calibrate
+			double timeRequiredToReachNextSensorSeconds = timeRequiredToReachNextSensor / 1000.0;
+			speedV1 = distanceBetweenSensors / timeRequiredToReachNextSensorSeconds;		// Calculate speed
 		}
 		
 		previousSensorDetected = sensorDetected;
@@ -105,10 +109,21 @@ void LDR::Calc(bool detectedProjectile, unsigned long time)
 	{
 		if (timeSensorOn != 0)					// Calculate high accuracy speed
 		{
-			speedV2 = LDRlength / ((double)timeSensorOn / 1000);
+			//speedV2 = LDRlength / ((double)timeSensorOn / 1000);
+			speedV2 = 0.12;
 			timeSensorOn = 0;
 		}
 	}
+}
+
+void LDR::inRuntimeCalibration(int sensor)
+{
+	int data = analogRead(sensor);						// Read value
+	sensorObjectDetectionThreshold[sensor] = data - differenceBetweenLightAndDarkForLDR;		// Set value	
+	Serial.print("IRT_calibrate: ");
+	Serial.print(sensor);
+	Serial.print("|");
+	Serial.println(sensorObjectDetectionThreshold[sensor]);
 }
 
 void LDR::Reset()

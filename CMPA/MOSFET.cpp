@@ -34,9 +34,9 @@ int MOSFET::Update(int LDRState, unsigned long time, double speed)
 				return CRITICAL_FET_POWER_ERROR;
 			}
 			// Is time waited longer than threshold?
-			if (speed != 0)
+			if (speed != 0.00)
 			{
-				if ((timeWaited / 1000) > (DistanceBetweenLDRAndCoil / speed))
+				if ((timeWaited / 1000.0) > (DistanceBetweenLDRAndCoil / speed))
 				{
 					SwitchFET(fetON, LOW);	// Turn off FET
 					fetON = NoFETsON;
@@ -78,6 +78,8 @@ int MOSFET::Update(int LDRState, unsigned long time, double speed)
 			}
 			else
 			{
+				Serial.print("STTTTAATE: ");
+				Serial.println(LDRState);
 				return CRITICAL_FET_SELECTION_ERROR;		// It is a different FET, which should be impossible
 			}
 		}
