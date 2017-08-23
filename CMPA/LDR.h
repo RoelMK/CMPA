@@ -10,8 +10,8 @@
 #endif
 
 #define sensorCount 4							// Begin analog A0 (1=A0, 2=A0,A1)
-#define calibrateDifferenceWarningThreshold 250	// If difference between two calibration readings is greater than this value, the software will display a warning
-#define differenceBetweenLightAndDarkForLDR 40	// Difference between light and dark
+#define calibrateDifferenceWarningThreshold 200	// If difference between two calibration readings is greater than this value, the software will display a warning
+#define differenceBetweenLightAndDarkForLDR 30	// Difference between light and dark
 #define distanceBetweenSensors 0.13				// In meters (0.52/4 for POC)
 #define distanceBetweenSensorAndNextCoil 0.065	// In meters
 #define LDRlength 0.004							// In meters, short-axis

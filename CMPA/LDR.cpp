@@ -48,7 +48,7 @@ int LDR::Update(unsigned long time)
 		
 		if (data < sensorObjectDetectionThreshold[sensor])	// Is light dimmed?
 		{
-			Serial.println(sensorObjectDetectionThreshold[sensor] - data);
+			//Serial.println(sensorObjectDetectionThreshold[sensor] - data);
 			if (!detectedProjectile)
 			{
 				detectedProjectile = true;
