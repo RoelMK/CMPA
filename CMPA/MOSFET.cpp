@@ -20,6 +20,19 @@ void MOSFET::SwitchFET(int fet, uint8_t state)
 
 int MOSFET::Update(int LDRState, unsigned long time, double speed)
 {
+	if (fetON != NoFETsON)
+	{
+		Serial.print("FET ON: ");
+		Serial.print(fetON);
+		Serial.print(" - ");
+		Serial.print(timeWaited);
+		Serial.println(" ms");
+		Serial.print(" - ");
+		Serial.print(speed);
+		Serial.println(" mps");
+	}
+	
+
 	if (LDRState == LDR_SENSOR_OK)
 	{
 		// LDR sensor has found no projectile
@@ -78,9 +91,13 @@ int MOSFET::Update(int LDRState, unsigned long time, double speed)
 			}
 			else
 			{
-				Serial.print("STTTTAATE: ");
-				Serial.println(LDRState);
-				return CRITICAL_FET_SELECTION_ERROR;		// It is a different FET, which should be impossible
+				Serial.println("[WARNING] Overspeed!");		// It is a different FET, but another FET is still on, overspeeding!
+				SwitchFET(fetON, LOW);
+				SwitchFET(LDRState, HIGH);
+				fetON = LDRState;
+				timeWaited = 0;
+				lastTime = time;
+				return FET_OK;		
 			}
 		}
 	}

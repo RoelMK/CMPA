@@ -9,7 +9,7 @@
 
 #define SERIAL_RATE 115200	// Serial communiciation bit
 #define DELAY 150			// Delay (microseconds)
-const bool debug = true;	// In debug mode? (execute special loop code)
+const bool debug = false;	// In debug mode? (execute special loop code)
 
 
 #pragma region Objects
@@ -40,7 +40,7 @@ void loop()
 		//Serial.print("  >> Status: ");
 		//Serial.println(LDRStatus);
 		//Serial.print("  >> Speed: ");
-		//Serial.println(ldr.getSpeed());
+		//Serial.println(ldr.getSpeedV2());
 		if (LDRStatus != LDR_SENSOR_FAILURE)
 		{
 			int FETStatus = fet.Update(LDRStatus, millis(), ldr.getSpeed());	// Update FETs

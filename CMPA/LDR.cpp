@@ -98,7 +98,6 @@ void LDR::Calc(bool detectedProjectile, unsigned long time)
 
 			timeRequiredToReachNextSensor = time - lastSensorDetectionTime;		// Calculate time passed
 			lastSensorDetectionTime = time;										// Set detection time
-			inRuntimeCalibration(previousSensorDetected);		// Calibrate
 			double timeRequiredToReachNextSensorSeconds = timeRequiredToReachNextSensor / 1000.0;
 			speedV1 = distanceBetweenSensors / timeRequiredToReachNextSensorSeconds;		// Calculate speed
 		}
@@ -109,22 +108,24 @@ void LDR::Calc(bool detectedProjectile, unsigned long time)
 	{
 		if (timeSensorOn != 0)					// Calculate high accuracy speed
 		{
-			//speedV2 = LDRlength / ((double)timeSensorOn / 1000);
-			speedV2 = 0.12;
+			speedV2 = LDRlength / ((double)timeSensorOn / 1000);
 			timeSensorOn = 0;
 		}
 	}
 }
 
-void LDR::inRuntimeCalibration(int sensor)
+double LDR::getSpeed()
 {
-	int data = analogRead(sensor);						// Read value
-	sensorObjectDetectionThreshold[sensor] = data - differenceBetweenLightAndDarkForLDR;		// Set value	
-	Serial.print("IRT_calibrate: ");
-	Serial.print(sensor);
-	Serial.print("|");
-	Serial.println(sensorObjectDetectionThreshold[sensor]);
+	if (speedV1 > speedV2)
+	{
+		return speedV1;
+	}
+	else
+	{
+		return speedV2;
+	}
 }
+
 
 void LDR::Reset()
 {
