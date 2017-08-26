@@ -83,11 +83,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LDR.h" />
+    <ClInclude Include="LightSpeed.h" />
     <ClInclude Include="MOSFET.h" />
     <ClInclude Include="__vm\.CMPA.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LDR.cpp" />
+    <ClCompile Include="LightSpeed.cpp" />
     <ClCompile Include="MOSFET.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

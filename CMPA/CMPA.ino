@@ -4,6 +4,7 @@
  Author:	Roel
 */
 
+#include "LightSpeed.h"
 #include "MOSFET.h"
 #include "LDR.h"
 
@@ -15,6 +16,7 @@ const bool debug = false;	// In debug mode? (execute special loop code)
 #pragma region Objects
 LDR ldr;
 MOSFET fet;
+LightSpeed lightSpeed;
 #pragma endregion
 
 #pragma region Data
@@ -27,7 +29,7 @@ void setup()
 {
 	Serial.begin(SERIAL_RATE);		// Init serial
 	Serial.println("Starting CMPA...");
-	ldr.Init();				// Init LDRs
+	ldr.Init(&lightSpeed);				// Init LDRs
 	fet.Init();				// Init FETs
 }
 

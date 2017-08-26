@@ -4,8 +4,10 @@
 
 #include "LDR.h"
 
-void LDR::Init()
+void LDR::Init(LightSpeed *ls)
 {
+	lightSpeed = ls;
+
 	Serial.println("Calibrating LDRs...");
 	bool failure = false;
 	for (int sensor = 0; sensor < sensorCount; sensor++)

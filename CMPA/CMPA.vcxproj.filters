@@ -31,6 +31,9 @@
       <Filter>Header Files\Sensors</Filter>
     </ClInclude>
     <ClInclude Include="MOSFET.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LightSpeed.h">
       <Filter>Header Files\Sensors</Filter>
     </ClInclude>
   </ItemGroup>
@@ -39,6 +42,9 @@
       <Filter>Source Files\Sensors</Filter>
     </ClCompile>
     <ClCompile Include="MOSFET.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LightSpeed.cpp">
       <Filter>Source Files\Sensors</Filter>
     </ClCompile>
   </ItemGroup>

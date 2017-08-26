@@ -26,10 +26,10 @@ int MOSFET::Update(int LDRState, unsigned long time, double speed)
 		Serial.print(fetON);
 		Serial.print(" - ");
 		Serial.print(timeWaited);
-		Serial.println(" ms");
+		Serial.print(" ms");
 		Serial.print(" - ");
 		Serial.print(speed);
-		Serial.println(" mps");
+		Serial.println(" m/s");
 	}
 	
 

@@ -3,11 +3,15 @@
 #ifndef _LDR_h
 #define _LDR_h
 
+#include "LightSpeed.h"
+
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "Arduino.h"
 #else
 	#include "WProgram.h"
 #endif
+
+
 
 #define sensorCount 4							// Begin analog A0 (1=A0, 2=A0,A1)
 #define calibrateDifferenceWarningThreshold 150	// If difference between two calibration readings is greater than this value, the software will display a warning
@@ -33,9 +37,10 @@ public:
 	}
 	int Update(unsigned long time);			// Update all sensor data
 	void Reset();							// Reset all data
-	void Init();							// Init LDRs
+	void Init(LightSpeed *ls);							// Init LDRs
 
 private:
+	LightSpeed *lightSpeed;
 	void Calc(bool detectedProjectile, unsigned long time);		// Calculate data
 	bool sensorObjectDetection[sensorCount];		// All sensor data
 	int sensorObjectDetectionThreshold[sensorCount];	// Sensor detection threshold (analog read value threshold (< = detection, > = no detection))
