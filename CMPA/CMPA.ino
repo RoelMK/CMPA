@@ -4,19 +4,22 @@
  Author:	Roel
 */
 
+#include "SpeedToTime.h"
 #include "LightSpeed.h"
 #include "MOSFET.h"
 #include "LDR.h"
 
-#define SERIAL_RATE 115200	// Serial communiciation bit
-#define DELAY 150			// Delay (microseconds)
+#pragma region Constants
+const unsigned long SERIAL_RATE = 115200;	// Serial communiciation bit
+const int DELAY = 150;		// Delay (microseconds)
 const bool debug = false;	// In debug mode? (execute special loop code)
-
+#pragma endregion
 
 #pragma region Objects
 LDR ldr;
 MOSFET fet;
 LightSpeed lightSpeed;
+SpeedToTime speedTime;
 #pragma endregion
 
 #pragma region Data
@@ -28,9 +31,10 @@ bool panic = false;			// In panic mode?
 void setup() 
 {
 	Serial.begin(SERIAL_RATE);		// Init serial
-	Serial.println("Starting CMPA...");
-	ldr.Init(&lightSpeed);				// Init LDRs
-	fet.Init();				// Init FETs
+	Serial.println("[INFO] Starting CMPA...");
+	ldr.Init(&lightSpeed);			// Init LDRs
+	fet.Init(&speedTime);			// Init FETs
+	Serial.println("[INFO] CMPA is ready");
 }
 
 // The loop function runs over and over again until power down or reset
@@ -39,10 +43,6 @@ void loop()
 	if (!panic && !debug)		// Do not continue if in panic mode
 	{
 		int LDRStatus = ldr.Update(millis());		// Update LDR state
-		//Serial.print("  >> Status: ");
-		//Serial.println(LDRStatus);
-		//Serial.print("  >> Speed: ");
-		//Serial.println(ldr.getSpeedV2());
 		if (LDRStatus != LDR_SENSOR_FAILURE)
 		{
 			int FETStatus = fet.Update(LDRStatus, millis(), ldr.getSpeed());	// Update FETs
@@ -74,13 +74,7 @@ void loop()
 	else if(debug)
 	{
 		// Debug code here
-		int LDRStatus = ldr.Update(millis());		// Update LDR state
-		//Serial.print("  >> Status: ");
-		//Serial.println(LDRStatus);
-		//Serial.print("  >> Speed: ");
-		//Serial.println(ldr.getSpeed());
-		delayMicroseconds(DELAY);
-		//delay(1000);
+		delay(1000);
 	}
 	else
 	{

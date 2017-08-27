@@ -4,8 +4,9 @@
 
 #include "MOSFET.h"
 
-void MOSFET::Init()
+void MOSFET::Init(SpeedToTime *speedTimePNT)
 {
+	speedTime = speedTimePNT;
 	for (int i = FirstFETpin; i <= LastFETpin; i++)
 	{
 		pinMode(i, OUTPUT);
@@ -49,7 +50,7 @@ int MOSFET::Update(int LDRState, unsigned long time, double speed)
 			// Is time waited longer than threshold?
 			if (speed != 0.00)
 			{
-				if ((timeWaited / 1000.0) > (DistanceBetweenLDRAndCoil / speed))
+				if ((timeWaited / 1000.0) > speedTime->getFETOnTime(fetON, speed))
 				{
 					SwitchFET(fetON, LOW);	// Turn off FET
 					fetON = NoFETsON;

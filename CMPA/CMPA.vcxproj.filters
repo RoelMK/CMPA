@@ -36,6 +36,9 @@
     <ClInclude Include="LightSpeed.h">
       <Filter>Header Files\Sensors</Filter>
     </ClInclude>
+    <ClInclude Include="SpeedToTime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LDR.cpp">
@@ -46,6 +49,9 @@
     </ClCompile>
     <ClCompile Include="LightSpeed.cpp">
       <Filter>Source Files\Sensors</Filter>
+    </ClCompile>
+    <ClCompile Include="SpeedToTime.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
