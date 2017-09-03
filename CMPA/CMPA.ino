@@ -4,6 +4,9 @@
  Author:	Roel
 */
 
+#include "OptiCom.h"
+#include "OptiLightData.h"
+#include "OptiLight.h"
 #include "SpeedToTime.h"
 #include "LightSpeed.h"
 #include "MOSFET.h"
@@ -20,6 +23,8 @@ LDR ldr;
 MOSFET fet;
 LightSpeed lightSpeed;
 SpeedToTime speedTime;
+OptiLight optiLight;
+OptiCom optiCom;
 #pragma endregion
 
 #pragma region Data
@@ -34,6 +39,7 @@ void setup()
 	Serial.println("[INFO] Starting CMPA...");
 	ldr.Init(&lightSpeed);			// Init LDRs
 	fet.Init(&speedTime);			// Init FETs
+	optiLight.Init(&lightSpeed, &optiCom);	// Init OptiLight
 	Serial.println("[INFO] CMPA is ready");
 }
 
@@ -45,6 +51,7 @@ void loop()
 		int LDRStatus = ldr.Update(millis());		// Update LDR state
 		if (LDRStatus != LDR_SENSOR_FAILURE)
 		{
+			optiLight.Update(LDRStatus);
 			int FETStatus = fet.Update(LDRStatus, millis(), ldr.getSpeed());	// Update FETs
 			if (FETStatus != FET_OK)
 			{

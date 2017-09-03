@@ -23,7 +23,7 @@ const int minimalDeltaNoiseDetect = 25;
 const int FAILED_LDRDELTA_HIGH = -3;				// Return: difference between two calibration readings is too high
 const int calibrateDifferenceWarningThreshold = 150;
 
-const int defaultNoise = 20;
+const int defaultNoise = 30;
 const int maxDifferenceBetweenLightAndDark = 250;
 #pragma endregion
 

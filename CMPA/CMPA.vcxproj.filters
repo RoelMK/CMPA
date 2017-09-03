@@ -39,6 +39,15 @@
     <ClInclude Include="SpeedToTime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OptiLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OptiLightData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OptiCom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LDR.cpp">
@@ -51,6 +60,15 @@
       <Filter>Source Files\Sensors</Filter>
     </ClCompile>
     <ClCompile Include="SpeedToTime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OptiLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OptiLightData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OptiCom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
