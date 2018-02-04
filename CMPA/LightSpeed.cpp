@@ -75,7 +75,7 @@ int LightSpeed::Start()
 	{
 		for (int s = 0; s < sensorCount; s++)
 		{
-			int read = analogRead(s);						// Read analog input
+			int read = ConvertAnalogReadLEDFETClosedToAnalogReadLEDFETOpen(analogRead(s));						// Read analog input (and convert)
 			readings[s] = readings[s] + read;				// Save reading
 		}
 		delayMicroseconds(delayus);							// Delay
@@ -132,6 +132,11 @@ int LightSpeed::Start()
 
 	// Return
 	return returnCode;
+}
+
+int LightSpeed::ConvertAnalogReadLEDFETClosedToAnalogReadLEDFETOpen(int analogData)
+{
+	return analogData; // TODO: code function
 }
 
 

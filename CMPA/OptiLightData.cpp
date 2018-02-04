@@ -4,26 +4,28 @@
 
 #include "OptiLightData.h"
 
-OptiLightData::OptiLightData(int lowNoiseThreshold, int highNoiseThreshold)
+OptiLightData::OptiLightData(double vLow , double vHigh)
 {
-	LowNoiseThreshold = lowNoiseThreshold;
-	HighNoiseThreshold = highNoiseThreshold;
-	DetectionAreaLength = LDRlength;
+	VLow = vLow;
+	VHigh = vHigh;
+	EstimatedFETopenTime = 1;
+	EstimatedFETcloseTime = 2;
 	Tries = 0;
 	HighestAcceleration = 0;
 }
 
-OptiLightData::OptiLightData(int lowNoiseThreshold, int highNoiseThreshold, double detectionAreaLength, double highestAcceleration, int tries)
+OptiLightData::OptiLightData(double vLow, int vHigh, double estimatedFETopenTime, double estimatedFETcloseTime, double highestAcceleration, int tries)
 {
-	LowNoiseThreshold = lowNoiseThreshold;
-	HighNoiseThreshold = highNoiseThreshold;
-	DetectionAreaLength = detectionAreaLength;
+	VLow = vLow;
+	VHigh = vHigh;
+	EstimatedFETopenTime = estimatedFETopenTime;
+	EstimatedFETcloseTime = estimatedFETcloseTime;
 	HighestAcceleration = highestAcceleration;
 	Tries = tries;
 }
 
 String OptiLightData::ToString()
 {
-	return LowNoiseThreshold + String(";") + HighNoiseThreshold + ";" + DetectionAreaLength + ";" + HighestAcceleration + ";" + Tries;
+	return VLow + String(";") + VHigh + ";" + EstimatedFETopenTime + ";" + EstimatedFETcloseTime + ";" + HighestAcceleration + ";" + Tries;
 }
 

@@ -47,6 +47,54 @@ bool OptiCom::GetData(int sensorCoilblock, OptiLightData* data, int* arrayLength
 		data = dataSensor3;
 		arrayLength = &dataSensor3Length;
 		break;
+	case 4:
+		data = dataSensor4;
+		arrayLength = &dataSensor4Length;
+		break;
+	case 5:
+		data = dataSensor5;
+		arrayLength = &dataSensor5Length;
+		break;
+	case 6:
+		data = dataSensor6;
+		arrayLength = &dataSensor6Length;
+		break;
+	case 7:
+		data = dataSensor7;
+		arrayLength = &dataSensor7Length;
+		break;
+	case 8:
+		data = dataSensor8;
+		arrayLength = &dataSensor8Length;
+		break;
+	case 9:
+		data = dataSensor9;
+		arrayLength = &dataSensor9Length;
+		break;
+	case 10:
+		data = dataSensor10;
+		arrayLength = &dataSensor10Length;
+		break;
+	case 11:
+		data = dataSensor11;
+		arrayLength = &dataSensor11Length;
+		break;
+	case 12:
+		data = dataSensor12;
+		arrayLength = &dataSensor12Length;
+		break;
+	case 13:
+		data = dataSensor13;
+		arrayLength = &dataSensor13Length;
+		break;
+	case 14:
+		data = dataSensor14;
+		arrayLength = &dataSensor14Length;
+		break;
+	case 15:
+		data = dataSensor15;
+		arrayLength = &dataSensor15Length;
+		break;
 	default:
 		return false;
 	}
@@ -72,6 +120,54 @@ void OptiCom::SetData(int sensorCoilblock, OptiLightData* data, int arrayLength)
 	case 3:
 		dataSensor3 = data;
 		dataSensor3Length = arrayLength;
+		break;
+	case 4:
+		dataSensor4 = data;
+		dataSensor4Length = arrayLength;
+		break;
+	case 5:
+		dataSensor5 = data;
+		dataSensor5Length = arrayLength;
+		break;
+	case 6:
+		dataSensor6 = data;
+		dataSensor6Length = arrayLength;
+		break;
+	case 7:
+		dataSensor7 = data;
+		dataSensor7Length = arrayLength;
+		break;
+	case 8:
+		dataSensor8 = data;
+		dataSensor8Length = arrayLength;
+		break;
+	case 9:
+		dataSensor9 = data;
+		dataSensor9Length = arrayLength;
+		break;
+	case 10:
+		dataSensor10 = data;
+		dataSensor10Length = arrayLength;
+		break;
+	case 11:
+		dataSensor11 = data;
+		dataSensor11Length = arrayLength;
+		break;
+	case 12:
+		dataSensor12 = data;
+		dataSensor12Length = arrayLength;
+		break;
+	case 13:
+		dataSensor13 = data;
+		dataSensor13Length = arrayLength;
+		break;
+	case 14:
+		dataSensor14 = data;
+		dataSensor14Length = arrayLength;
+		break;
+	case 15:
+		dataSensor15 = data;
+		dataSensor15Length = arrayLength;
 		break;
 	default:
 		break;
@@ -151,6 +247,42 @@ String OptiCom::ConvertToSerialData()
 		case 3:
 			AddObjectDataToString(&toReturn, dataSensor3, dataSensor3Length);
 			break;
+		case 4:
+			AddObjectDataToString(&toReturn, dataSensor4, dataSensor4Length);
+			break;
+		case 5:
+			AddObjectDataToString(&toReturn, dataSensor5, dataSensor5Length);
+			break;
+		case 6:
+			AddObjectDataToString(&toReturn, dataSensor6, dataSensor6Length);
+			break;
+		case 7:
+			AddObjectDataToString(&toReturn, dataSensor7, dataSensor7Length);
+			break;
+		case 8:
+			AddObjectDataToString(&toReturn, dataSensor8, dataSensor8Length);
+			break;
+		case 9:
+			AddObjectDataToString(&toReturn, dataSensor9, dataSensor9Length);
+			break;
+		case 10:
+			AddObjectDataToString(&toReturn, dataSensor10, dataSensor10Length);
+			break;
+		case 11:
+			AddObjectDataToString(&toReturn, dataSensor11, dataSensor11Length);
+			break;
+		case 12:
+			AddObjectDataToString(&toReturn, dataSensor12, dataSensor12Length);
+			break;
+		case 13:
+			AddObjectDataToString(&toReturn, dataSensor13, dataSensor13Length);
+			break;
+		case 14:
+			AddObjectDataToString(&toReturn, dataSensor14, dataSensor14Length);
+			break;
+		case 15:
+			AddObjectDataToString(&toReturn, dataSensor15, dataSensor15Length);
+			break;
 		default:
 			break;
 		}
@@ -227,6 +359,54 @@ bool OptiCom::ConvertFromSerialInputData(String dataIn)
 					dataSensor3 = data;
 					dataSensor3Length = arrayLengthForSensorCoilBlock - 1;
 					break;
+				case 5:
+					dataSensor4 = data;
+					dataSensor4Length = arrayLengthForSensorCoilBlock - 1;
+					break;
+				case 6:
+					dataSensor5 = data;
+					dataSensor5Length = arrayLengthForSensorCoilBlock - 1;
+					break;
+				case 7:
+					dataSensor6 = data;
+					dataSensor6Length = arrayLengthForSensorCoilBlock - 1;
+					break;
+				case 8:
+					dataSensor7 = data;
+					dataSensor7Length = arrayLengthForSensorCoilBlock - 1;
+					break;
+				case 9:
+					dataSensor8 = data;
+					dataSensor8Length = arrayLengthForSensorCoilBlock - 1;
+					break;
+				case 10:
+					dataSensor9 = data;
+					dataSensor9Length = arrayLengthForSensorCoilBlock - 1;
+					break;
+				case 11:
+					dataSensor10 = data;
+					dataSensor10Length = arrayLengthForSensorCoilBlock - 1;
+					break;
+				case 12:
+					dataSensor11 = data;
+					dataSensor11Length = arrayLengthForSensorCoilBlock - 1;
+					break;
+				case 13:
+					dataSensor12 = data;
+					dataSensor12Length = arrayLengthForSensorCoilBlock - 1;
+					break;
+				case 14:
+					dataSensor13 = data;
+					dataSensor13Length = arrayLengthForSensorCoilBlock - 1;
+					break;
+				case 15:
+					dataSensor14 = data;
+					dataSensor14Length = arrayLengthForSensorCoilBlock - 1;
+					break;
+				case 16:
+					dataSensor15 = data;
+					dataSensor15Length = arrayLengthForSensorCoilBlock - 1;
+					break;
 				default:
 					break;
 				}
@@ -253,15 +433,16 @@ bool OptiCom::ConvertFromSerialInputData(String dataIn)
 
 OptiLightData OptiCom::ToObject(String strData, bool *result)
 {
-	int lowNoiseThreshold = 0;
-	int highNoiseThreshold = 1023;
-	double detectionAreaLength = LDRlength;
+	double vLow = 0;
+	double vHigh = 1023;
+	double estimatedFETopenTime = LDRlength;				// UPDATE: incorrect data!
+	double estimatedFETcloseTime;
 	double highestAcceleration = 0;
 	int tries = 0;
 
-	*result = SplitSingleOptiLightSerialData(strData, &lowNoiseThreshold, &highNoiseThreshold, &detectionAreaLength, &highestAcceleration, &tries);
+	*result = SplitSingleOptiLightSerialData(strData, &vLow, &vHigh, &estimatedFETopenTime, &estimatedFETcloseTime, &highestAcceleration, &tries);
 
-	OptiLightData data(lowNoiseThreshold, highNoiseThreshold, detectionAreaLength, highestAcceleration, tries);
+	OptiLightData data(vLow, vHigh, estimatedFETopenTime, estimatedFETcloseTime, highestAcceleration, tries);
 	return data;
 }
 
@@ -331,7 +512,7 @@ bool OptiCom::SplitSensorCoilBlockOptiLightSerialData(String dataIn, String *dat
 	return false;
 }
 
-bool OptiCom::SplitSingleOptiLightSerialData(String strData, int *lowNoiseThreshold, int *highNoiseThreshold, double *detectionAreaLength, double *highestAcceleration, int *tries)
+bool OptiCom::SplitSingleOptiLightSerialData(String strData, double *vLow, double *vHigh, double *estimatedFETopenTime, double *estimatedFETcloseTime, double *highestAcceleration, int *tries)
 {
 	if (strData.indexOf(";") > 0) // = valid data
 	{
@@ -359,11 +540,12 @@ bool OptiCom::SplitSingleOptiLightSerialData(String strData, int *lowNoiseThresh
 		}
 
 		// 3. Return everything
-		*lowNoiseThreshold = convertToInt(data[1]);
-		*highNoiseThreshold = convertToInt(data[2]);
-		*detectionAreaLength = convertToDouble(data[3]);
-		*highestAcceleration = convertToDouble(data[4]);
-		*tries = convertToInt(data[5]);
+		*vLow = convertToDouble(data[1]);
+		*vHigh = convertToDouble(data[2]);
+		*estimatedFETopenTime = convertToDouble(data[3]);
+		*estimatedFETcloseTime = convertToDouble(data[4]);
+		*highestAcceleration = convertToDouble(data[5]);
+		*tries = convertToInt(data[6]);
 
 		// 4. Clean and return
 		delete[] data;

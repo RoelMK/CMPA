@@ -14,13 +14,14 @@
 class OptiLightData
 {
 public:
-	OptiLightData(int lowNoiseThreshold, int highNoiseThreshold);
-	OptiLightData(int lowNoiseThreshold, int highNoiseThreshold, double detectionAreaLength, double highestAcceleration, int tries);
+	OptiLightData(double vLow, double vHigh);
+	OptiLightData(double vLow, int vHigh, double estimatedFETopenTime, double estimatedFETcloseTime, double highestAcceleration, int tries);
 	String ToString();
 
-	int LowNoiseThreshold;
-	int HighNoiseThreshold;
-	double DetectionAreaLength;
+	double VLow;
+	double VHigh;
+	double EstimatedFETopenTime;
+	double EstimatedFETcloseTime;
 	double HighestAcceleration;
 	int Tries;
 private:

@@ -28,6 +28,30 @@ private:
 	int dataSensor2Length;
 	OptiLightData* dataSensor3;
 	int dataSensor3Length;
+	OptiLightData* dataSensor4;
+	int dataSensor4Length;
+	OptiLightData* dataSensor5;
+	int dataSensor5Length;
+	OptiLightData* dataSensor6;
+	int dataSensor6Length;
+	OptiLightData* dataSensor7;
+	int dataSensor7Length;
+	OptiLightData* dataSensor8;
+	int dataSensor8Length;
+	OptiLightData* dataSensor9;
+	int dataSensor9Length;
+	OptiLightData* dataSensor10;
+	int dataSensor10Length;
+	OptiLightData* dataSensor11;
+	int dataSensor11Length;
+	OptiLightData* dataSensor12;
+	int dataSensor12Length;
+	OptiLightData* dataSensor13;
+	int dataSensor13Length;
+	OptiLightData* dataSensor14;
+	int dataSensor14Length;
+	OptiLightData* dataSensor15;
+	int dataSensor15Length;
 
 	// OptiCom
 	bool ExecuteOptiComCommand(String command, String *response);
@@ -43,10 +67,10 @@ private:
 	bool ConvertFromSerialInputData(String dataIn);
 	String ConvertToSerialData();
 	void AddObjectDataToString(String *stringToAddDataTo, OptiLightData *data, int length);
-	bool SplitSingleOptiLightSerialData(String strData, int *lowNoiseThreshold, int *highNoiseThreshold, double *detectionAreaLength, double *highestAcceleration, int *tries);
+	bool SplitSingleOptiLightSerialData(String strData, double *vLow, double *vHigh, double *estimatedFETopenTime, double *estimatedFETcloseTime, double *highestAcceleration, int *tries);
 	bool SplitSensorCoilBlockOptiLightSerialData(String dataIn, String *dataOut, int *arrayLength);
 	bool SplitMultipleOptiLightSerialData(String dataIn, String *dataOut, int *arrayLength);
-	const int amountOfSerialData = 6;
+	const int amountOfSerialData = 7;
 	const int MAGIC_NUMBER = 255;
 	const String MAGIC_NUMBER_STR = "255";
 

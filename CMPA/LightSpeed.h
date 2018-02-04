@@ -14,6 +14,7 @@ const int LED_ONOFF_PIN = 10;			// Digital pin of LED transistor
 const int LED_ONOFF_TIME = 10;			// Wait for the LEDs to turn on/off	(in ms)
 const int ANALOGREAD_DELAY = 150;		// How long it takes to run analogRead (in us)	
 const int calibrateTime = 1000;			// Time to wait to detect noise (in ms)
+const int calibrationResistorValue = 1000; // Resistance of resistor in parallel with LED transistor (in Ohm)
 
 const int CALIBRATION_OK = 1;					// Return: calibration OK
 const int FAILED_NOISE_LOWDELTAMAXMIN = -1;	// Return: too much background light
@@ -60,6 +61,7 @@ private:
 	bool isReliable;							// Has the sensor been below the detection threshold?
 	int detectingSensor;						// Sensor which is detecting a projectile
 
+	int ConvertAnalogReadLEDFETClosedToAnalogReadLEDFETOpen(int analogData);	// Convert result from AnalogRead() with LED FET closed to 'real' analog value (with LED FET open)
 	void NoiseCalibration(int sensor, int correction);			// Calibrate sensor
 	bool UpdateDetectingSensor(int sensor, int reading, long time);		// Update sensor data
 	
