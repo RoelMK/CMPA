@@ -8,16 +8,23 @@ bool OptiCom::Init()
 {
 	// Serial init
 	Serial.println("[INFO] OptiCom is loading... please make sure OptiCom is running on your PC");
-	Serial.println("[OPTICOM] GET");
-
-	// Get input
-	String input;
-	while (Serial.available() > 0) {
-		input = Serial.readString();
-	}
+	String response;
+	bool result = ExecuteOptiComCommand(OptiComGetData, &response);
+	Serial.print("[INFO] OptiCom result: ");
+	Serial.println(result);
+	Serial.print("[INFO] OptiCom response: ");
+	Serial.println(response);
+	
 
 	// Init data and return
-	return ConvertFromSerialInputData(input);
+	if (result)
+	{
+		return ConvertFromSerialInputData(response);
+	}
+	else
+	{
+		return false;
+	}
 }
 
 bool OptiCom::GetData(int sensorCoilblock, OptiLightData* data, int* arrayLength)
@@ -46,13 +53,133 @@ bool OptiCom::GetData(int sensorCoilblock, OptiLightData* data, int* arrayLength
 	return true;
 }
 
+void OptiCom::SetData(int sensorCoilblock, OptiLightData* data, int arrayLength)
+{
+	switch (sensorCoilblock)
+	{
+	case 0:
+		dataSensor0 = data;
+		dataSensor0Length = arrayLength;
+		break;
+	case 1:
+		dataSensor1 = data;
+		dataSensor1Length = arrayLength;
+		break;
+	case 2:
+		dataSensor2 = data;
+		dataSensor2Length = arrayLength;
+		break;
+	case 3:
+		dataSensor3 = data;
+		dataSensor3Length = arrayLength;
+		break;
+	default:
+		break;
+	}
+}
+
+bool OptiCom::SyncData()
+{
+	String toSend = ConvertToSerialData();
+	String response;
+	bool result = ExecuteOptiComCommand(OptiComSetData + toSend, &response);
+	if (result)
+	{
+		if (response == OptiComSetResponseOK)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool OptiCom::ExecuteOptiComCommand(String command, String *response)
+{
+	// Read data
+	delay(OptiComPreCommandWait);
+	Serial.println(command);
+	delay(OptiComAfterCommandWait);
+
+	// Return data
+	if (Serial.available() > 0)
+	{
+		String serialRead = Serial.readString();
+		String correctedData = "";
+
+		for (int c = 0; c < serialRead.length(); c++)
+		{
+			if ((' ' <= serialRead[c]) && (serialRead[c] <= '~'))	// Correct input, remove all non-printable chars
+			{
+				correctedData += serialRead[c];
+			}
+		}
+
+		*response = correctedData;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 String OptiCom::ConvertToSerialData()
 {
+	String toReturn = MAGIC_NUMBER_STR;
 
+	for (int s = 0; s < sensorCount; s++)
+	{
+		toReturn += ("|" + MAGIC_NUMBER_STR);
+		switch(s)
+		{
+		case 0:
+			AddObjectDataToString(&toReturn, dataSensor0, dataSensor0Length);
+			break;
+		case 1:
+			AddObjectDataToString(&toReturn, dataSensor1, dataSensor1Length);
+			break;
+		case 2:
+			AddObjectDataToString(&toReturn, dataSensor2, dataSensor2Length);
+			break;
+		case 3:
+			AddObjectDataToString(&toReturn, dataSensor3, dataSensor3Length);
+			break;
+		default:
+			break;
+		}
+	}
+
+	return toReturn;
+}
+
+void OptiCom::AddObjectDataToString(String *stringToAddDataTo, OptiLightData *data, int length)
+{
+	for (int x = 0; x < length; x++)
+	{
+		*stringToAddDataTo += "@" + MAGIC_NUMBER_STR + ";" + data[x].ToString();
+	}
 }
 
 bool OptiCom::ConvertFromSerialInputData(String dataIn)
 {
+	// Is data OK?
+	if (dataIn.indexOf("|") < 1)
+	{
+		Serial.println("[INFO] OptiLight data is not present");
+		return false;
+	}
+	else
+	{
+		Serial.println("[INFO] OptiLight data is present");
+	}
+
 	String *dataSplitted;
 	int arrayLength = 0;
 
@@ -60,6 +187,8 @@ bool OptiCom::ConvertFromSerialInputData(String dataIn)
 	bool result = SplitMultipleOptiLightSerialData(dataIn, dataSplitted, &arrayLength);
 	if (result && arrayLength > sensorCount)
 	{
+		Serial.print("Array0: ");
+		Serial.println(dataSplitted[0]);
 		for (int s = 1; s < arrayLength; s++)
 		{
 			// Step 2. Split data on noise threshold level
@@ -106,6 +235,7 @@ bool OptiCom::ConvertFromSerialInputData(String dataIn)
 			}
 			else
 			{
+				Serial.println("[WARNING] Corrupt OptiLight data");
 				delete[] dataSplitted;
 				return false;
 			}
@@ -116,6 +246,7 @@ bool OptiCom::ConvertFromSerialInputData(String dataIn)
 	}
 	else
 	{
+		Serial.println("[WARNING] Corrupt OptiLight data");
 		return false;
 	}
 }
@@ -143,10 +274,13 @@ bool OptiCom::SplitMultipleOptiLightSerialData(String dataIn, String *dataOut, i
 		// 1. Split data 
 		int amountOfData = countChars(dataIn, '|') + 1;
 
-		String* data = new String[amountOfData]; //String data[amountOfData];
+		String* data = new String[amountOfData]; //String data[amountOfData]; <--- is the issue
 		char separatorTokenSemicolon[] = "|";
-
+		
 		splitString(dataIn, separatorTokenSemicolon, data);
+
+		Serial.print("Internal1: ");
+		Serial.println(data[1]);
 
 		// 2. Check magic number
 		if (convertToInt(data[0]) != MAGIC_NUMBER)
@@ -161,7 +295,6 @@ bool OptiCom::SplitMultipleOptiLightSerialData(String dataIn, String *dataOut, i
 
 		return true;
 	}
-
 	return false;
 }
 
@@ -181,6 +314,8 @@ bool OptiCom::SplitSensorCoilBlockOptiLightSerialData(String dataIn, String *dat
 		if (convertToInt(data[0]) != MAGIC_NUMBER)
 		{
 			delete[] data;
+			Serial.print("[DEBUG] AFailed for: ");
+			Serial.println(dataIn);
 			return false;
 		}
 
@@ -191,6 +326,8 @@ bool OptiCom::SplitSensorCoilBlockOptiLightSerialData(String dataIn, String *dat
 		return true;
 	}
 
+	Serial.print("[DEBUG] BFailed for: ");
+	Serial.println(dataIn);
 	return false;
 }
 
@@ -203,6 +340,8 @@ bool OptiCom::SplitSingleOptiLightSerialData(String strData, int *lowNoiseThresh
 
 		if (amountOfData < amountOfSerialData) // Is not enough data available?
 		{
+			Serial.print("[DEBUG] AFailed for: ");
+			Serial.println(strData);
 			return false;
 		}
 
@@ -214,6 +353,8 @@ bool OptiCom::SplitSingleOptiLightSerialData(String strData, int *lowNoiseThresh
 		// 2. Check magic number
 		if (convertToInt(data[0]) != MAGIC_NUMBER)
 		{
+			Serial.print("[DEBUG] BFailed for: ");
+			Serial.println(strData);
 			return false;
 		}
 
@@ -226,10 +367,11 @@ bool OptiCom::SplitSingleOptiLightSerialData(String strData, int *lowNoiseThresh
 
 		// 4. Clean and return
 		delete[] data;
-
+		Serial.println("[DEBUG] OK");
 		return true;
 	}
-
+	Serial.print("[DEBUG] CFailed for: ");
+	Serial.println(strData);
 	return false;
 }
 #pragma endregion

@@ -13,7 +13,8 @@ void LDR::Init(LightSpeed* lightSpeedPNT)
 	{
 		Serial.println("");
 		Serial.println(">> LDR calibration failure detected, waiting for serial input...");
-		while (!Serial.available()) {}
+		while (Serial.available() == 0) {}
+		Serial.readString();
 	}
 	Serial.println("...ready!");
 }

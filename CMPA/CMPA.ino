@@ -13,7 +13,7 @@
 #include "LDR.h"
 
 #pragma region Constants
-const unsigned long SERIAL_RATE = 115200;	// Serial communiciation bit
+const unsigned long SERIAL_RATE = 38400;	// Serial communiciation bit 115200
 const int DELAY = 150;		// Delay (microseconds)
 const bool debug = false;	// In debug mode? (execute special loop code)
 #pragma endregion
@@ -36,6 +36,7 @@ bool panic = false;			// In panic mode?
 void setup() 
 {
 	Serial.begin(SERIAL_RATE);		// Init serial
+	delay(1000);
 	Serial.println("[INFO] Starting CMPA...");
 	ldr.Init(&lightSpeed);			// Init LDRs
 	fet.Init(&speedTime);			// Init FETs

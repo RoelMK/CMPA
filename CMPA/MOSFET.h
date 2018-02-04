@@ -13,7 +13,7 @@
 #include "SpeedToTime.h"
 
 #define FirstFETpin 2
-#define LastFETpin 5
+#define LastFETpin 17
 
 #define NoFETsON -1
 #define maxFETPoweredTime 1000	// Max time a FET is allowed to be powered on (in ms)

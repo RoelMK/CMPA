@@ -27,7 +27,7 @@ const int defaultNoise = 30;
 const int maxDifferenceBetweenLightAndDark = 250;
 #pragma endregion
 
-const int sensorCount = 4;				// Begin analog A0 (1=A0, 2=A0,A1)
+const int sensorCount = 16;				// Begin analog A0 (1=A0, 2=A0,A1)
 const int noDetection = -1;				// lastSensorDetectedProjectile default value
 const double LDRlength = 0.015;			// In meters, short-axis (source: https://www.vanallesenmeer.nl/LDR-5528)
 
