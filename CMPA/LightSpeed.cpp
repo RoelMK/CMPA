@@ -11,7 +11,7 @@ int LightSpeed::Start()
 	pinMode(LED_ONOFF_PIN, OUTPUT);							// Set transistor pin to output
 	digitalWrite(LED_ONOFF_PIN, HIGH);						// Turn on LEDs
 	delay(LED_ONOFF_TIME);
-	int delayus = 1000 - ANALOGREAD_DELAY * sensorCount;	// Calculate delay
+	int delayus = ANALOGREAD_DELAY * sensorCount;	// Calculate delay
 	lastSensorDetectedProjectile = noDetection;				// Set lastSensorDetectedProjectile to noDetection
 	long readings[sensorCount];								// Init readings array
 	for (int s = 0; s < sensorCount; s++)
@@ -23,7 +23,7 @@ int LightSpeed::Start()
 	Serial.println(">> LED ON");
 	int maxValue[sensorCount];
 
-	for (int t = 0; t < calibrateTime; t++)
+	for (int t = 0; t < calibrationReadings; t++)
 	{
 		for (int s = 0; s < sensorCount; s++)
 		{
@@ -46,7 +46,7 @@ int LightSpeed::Start()
 	}
 	for (int s = 0; s < sensorCount; s++)
 	{
-		sensorUMax[s] = readings[s] / calibrateTime;		// Calculate average
+		sensorUMax[s] = readings[s] / calibrationReadings;		// Calculate average
 		readings[s] = 0;
 
 		if (s > 0)
@@ -71,7 +71,7 @@ int LightSpeed::Start()
 	digitalWrite(LED_ONOFF_PIN, LOW);		// Turn off LEDs
 	delay(LED_ONOFF_TIME);
 
-	for (int t = 0; t < calibrateTime; t++)
+	for (int t = 0; t < calibrationReadings; t++)
 	{
 		for (int s = 0; s < sensorCount; s++)
 		{
@@ -82,7 +82,7 @@ int LightSpeed::Start()
 	}
 	for (int s = 0; s < sensorCount; s++)
 	{
-		sensorUMin[s] = readings[s] / calibrateTime;		// Calculate average
+		sensorUMin[s] = readings[s] / calibrationReadings;		// Calculate average
 		readings[s] = 0;
 		Serial.print("LDR");
 		Serial.print(s);
@@ -136,7 +136,17 @@ int LightSpeed::Start()
 
 int LightSpeed::ConvertAnalogReadLEDFETClosedToAnalogReadLEDFETOpen(int analogData)
 {
-	return analogData; // TODO: code function
+	double voltage = analogData * (5.0 / 1023.0);		// Convert analogRead to voltage
+	double resistanceLDR = R2VoltageDividerResistance * (5.0 / voltage - 1) - calibrationResistorValue;		// Calculate resistance of LDR
+	if (resistanceLDR < minimalResistanceLDR)
+	{
+		Serial.print("[WARNING] LDR low resistance: ");
+		Serial.print(resistanceLDR);
+		Serial.print(" for analogRead ");
+		Serial.println(analogData);
+		return analogData;
+	}
+	return (int) (R2VoltageDividerResistance / (resistanceLDR + R2VoltageDividerResistance) * 1023);		// Return 'real' analogRead (without extra resistance in serie with LDR)
 }
 
 

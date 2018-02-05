@@ -13,8 +13,9 @@
 const int LED_ONOFF_PIN = 21;			// Digital pin of LED transistor
 const int LED_ONOFF_TIME = 10;			// Wait for the LEDs to turn on/off	(in ms)
 const int ANALOGREAD_DELAY = 150;		// How long it takes to run analogRead (in us)	
-const int calibrateTime = 1000;			// Time to wait to detect noise (in ms)
-const int calibrationResistorValue = 1000; // Resistance of resistor in parallel with LED transistor (in Ohm)
+const int calibrationReadings = 500;			// Number of calibration readings
+const int calibrationResistorValue = 10000; // Resistance of resistor in parallel with LED transistor (in Ohm)
+const int R2VoltageDividerResistance = 10000;	// Resistance of second resistor in voltage divider (in Ohm)
 
 const int CALIBRATION_OK = 1;					// Return: calibration OK
 const int FAILED_NOISE_LOWDELTAMAXMIN = -1;	// Return: too much background light
@@ -26,6 +27,7 @@ const int calibrateDifferenceWarningThreshold = 150;
 
 const int defaultNoise = 30;
 const int maxDifferenceBetweenLightAndDark = 250;
+const int minimalResistanceLDR = 2500;		// Minimal resistance which a LDR should have (in Ohm)
 #pragma endregion
 
 const int sensorCount = 16;				// Begin analog A0 (1=A0, 2=A0,A1)
