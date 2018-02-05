@@ -10,7 +10,7 @@
 #endif
 
 #pragma region Constants: calibration
-const int LED_ONOFF_PIN = 10;			// Digital pin of LED transistor
+const int LED_ONOFF_PIN = 21;			// Digital pin of LED transistor
 const int LED_ONOFF_TIME = 10;			// Wait for the LEDs to turn on/off	(in ms)
 const int ANALOGREAD_DELAY = 150;		// How long it takes to run analogRead (in us)	
 const int calibrateTime = 1000;			// Time to wait to detect noise (in ms)
