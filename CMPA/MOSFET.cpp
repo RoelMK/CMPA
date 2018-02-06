@@ -14,12 +14,64 @@ void MOSFET::Init(SpeedToTime *speedTimePNT)
 	fetON = NoFETsON;
 }
 
-void MOSFET::SwitchFET(int fet, uint8_t state)
+void MOSFET::SwitchFET(int fet, uint8_t state, int turnOnAfterMs)
 {
-	digitalWrite(fet + FirstFETpin, state);
+	if (turnOnAfterMs != 0)
+	{
+		timeToWaitBeforeTurningOnFET = turnOnAfterMs;
+		fetToSwitchON = fet;
+	}
+	else
+	{
+		if (fet == fetToSwitchON && state == LOW)
+		{
+			fetToSwitchON = NoFETsON;
+			timeToWaitBeforeTurningOnFET = 0;
+		}
+		else if(state == HIGH)
+		{
+			fetToSwitchON = NoFETsON;
+		}
+
+		digitalWrite(fet + FirstFETpin, state);
+	}
 }
 
-int MOSFET::Update(int LDRState, unsigned long time, double speed)
+int MOSFET::UpdateFETRealState(unsigned long time)
+{
+	// Check if any FETs should be turned on
+	if (fetToSwitchON != NoFETsON)
+	{
+		timeToWaitBeforeTurningOnFET -= (time - lastTime);
+		if (timeToWaitBeforeTurningOnFET <= 0)
+		{
+			SwitchFET(fetToSwitchON, HIGH, 0);
+			fetToSwitchON = NoFETsON;
+			timeToWaitBeforeTurningOnFET = 0;
+		}
+	}
+
+	// Check FET time state
+	// -> Calculate turn on time
+	if (fetON != NoFETsON && fetToSwitchON == NoFETsON)
+	{
+		fetOnTime += (time - lastTimeFETSwitch);
+	}
+	else
+	{
+		fetOnTime = 0;
+	}
+	// -> Check time
+	if (fetOnTime > maxFETPoweredTime)
+	{
+		return CRITICAL_FET_POWER_ERROR;
+	}
+
+	lastTimeFETSwitch = time;
+	return FET_OK;
+}
+
+int MOSFET::UpdateFETVirtualState(int LDRState, unsigned long time, double speed)
 {
 	if (fetON != NoFETsON)
 	{
@@ -43,23 +95,19 @@ int MOSFET::Update(int LDRState, unsigned long time, double speed)
 			// Calculate time waited
 			timeWaited += (time - lastTime);
 			lastTime = time;
-			if (time - lastTime + timeWaited > maxFETPoweredTime)
-			{
-				return CRITICAL_FET_POWER_ERROR;
-			}
 			// Is time waited longer than threshold?
 			if (speed != 0.00)
 			{
 				if ((timeWaited / 1000.0) > speedTime->getFETOnTime(fetON, speed))
 				{
-					SwitchFET(fetON, LOW);	// Turn off FET
+					SwitchFET(fetON, LOW, 0);	// Turn off FET
 					fetON = NoFETsON;
 					timeWaited = 0;
 				}
 			}
 			else
 			{
-				SwitchFET(fetON, LOW);	// Turn off FET
+				SwitchFET(fetON, LOW, 0);	// Turn off FET
 				fetON = NoFETsON;
 				timeWaited = 0;
 			}
@@ -75,7 +123,7 @@ int MOSFET::Update(int LDRState, unsigned long time, double speed)
 		if (fetON == NoFETsON)
 		{
 			lastTime = time;
-			SwitchFET(LDRState, HIGH);	// Turn on FET
+			SwitchFET(LDRState, HIGH, CalculateTimeToWait(speedTime->getFETOnTime(fetON, speed) * 1000));	// Turn on FET
 			fetON = LDRState;
 			return FET_OK;
 		}
@@ -84,17 +132,13 @@ int MOSFET::Update(int LDRState, unsigned long time, double speed)
 			// 2. The projectile is not for the first time between the LDR and the light source
 			if (fetON == LDRState)
 			{
-				if (time - lastTime + timeWaited > maxFETPoweredTime)
-				{
-					return CRITICAL_FET_POWER_ERROR;		
-				}
 				return FET_OK;		// It is the same LDR, so it's OK
 			}
 			else
 			{
 				Serial.println("[WARNING] Overspeed!");		// It is a different FET, but another FET is still on, overspeeding!
-				SwitchFET(fetON, LOW);
-				SwitchFET(LDRState, HIGH);
+				SwitchFET(fetON, LOW, 0);
+				SwitchFET(LDRState, HIGH, CalculateTimeToWait(speedTime->getFETOnTime(fetON, speed) * 1000));
 				fetON = LDRState;
 				timeWaited = 0;
 				lastTime = time;
@@ -104,10 +148,22 @@ int MOSFET::Update(int LDRState, unsigned long time, double speed)
 	}
 }
 
+int MOSFET::CalculateTimeToWait(int estimatedTurnOnTime)
+{
+	if (estimatedTurnOnTime > maxFETPoweredTime * 0.9)
+	{
+		return estimatedTurnOnTime - maxFETPoweredTime * 0.9;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 void MOSFET::Panic()
 {
 	if (fetON != NoFETsON)
 	{
-		SwitchFET(fetON, LOW);
+		SwitchFET(fetON, LOW, 0);
 	}
 }

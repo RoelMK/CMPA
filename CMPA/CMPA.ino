@@ -49,11 +49,18 @@ void loop()
 {
 	if (!panic && !debug)		// Do not continue if in panic mode
 	{
+		int FETStateReal = fet.UpdateFETRealState(millis());	// Update FETs
+		if (FETStateReal != FET_OK)
+		{
+			Panic("[CRITICAL] FET failure in real-mode (power)");
+			return;
+		}
+
 		int LDRStatus = ldr.Update(millis());		// Update LDR state
 		if (LDRStatus != LDR_SENSOR_FAILURE)
 		{
 			//optiLight.Update(LDRStatus);
-			int FETStatus = fet.Update(LDRStatus, millis(), ldr.getSpeed());	// Update FETs
+			int FETStatus = fet.UpdateFETVirtualState(LDRStatus, millis(), ldr.getSpeed());	// Update FETs
 			if (FETStatus != FET_OK)
 			{
 				switch (FETStatus)

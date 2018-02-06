@@ -26,14 +26,20 @@ class MOSFET
 {
 public:
 	void Init(SpeedToTime *speedTimePNT);							// Init FETs
-	void SwitchFET(int fet, uint8_t state);							// Switch FET low/high
-	int Update(int LDRState, unsigned long time, double speed);		// Update FETs
+	void SwitchFET(int fet, uint8_t state, int turnOnAfterMs);		// Switch FET low/high
+	int UpdateFETVirtualState(int LDRState, unsigned long time, double speed);		// Update FET virtual state
+	int UpdateFETRealState(unsigned long time);					// Update FET real state
 	void Panic();													// Panic: turn off all FETs
 private:
+	int CalculateTimeToWait(int estimatedTurnOnTime);	// Calculate how long to wait before turning on FET
 	SpeedToTime *speedTime;		// Speed to time object
-	int fetON;					// Number of FET on
-	unsigned long lastTime;		// Last time
-	int timeWaited;				// Time waited
+	int fetON;					// ID of FET which is (virtually) on
+	int timeToWaitBeforeTurningOnFET;	// Time to wait before turning on FET
+	int fetToSwitchON;					// FET to switch on (only used when timeToWaitBeforeTurningOnFET > 0
+	int fetOnTime;						// How long a FET is on
+	unsigned long lastTime;				// Last time (for FET timer)
+	unsigned long lastTimeFETSwitch;	// Last time (for FET on/off timer)
+	int timeWaited;				// Time waited, how long a FET is 'virtually' on
 };
 
 #endif
