@@ -13,11 +13,17 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Sensors">
+    <Filter Include="Header Files\Sensor Data Processing">
+      <UniqueIdentifier>{a3a3146c-4e13-41b7-a349-a75e4b7bce70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Sensor Data Processing">
       <UniqueIdentifier>{87d96851-d5b8-4c4e-b90f-54848eb28c23}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Sensors">
-      <UniqueIdentifier>{a3a3146c-4e13-41b7-a349-a75e4b7bce70}</UniqueIdentifier>
+    <Filter Include="Header Files\FET Control">
+      <UniqueIdentifier>{be569be5-496b-40d2-839b-558fa83a5e4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FET Control">
+      <UniqueIdentifier>{4911f616-8b43-46ee-a91d-a563a01be20f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -28,48 +34,57 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LDR.h">
-      <Filter>Header Files\Sensors</Filter>
-    </ClInclude>
-    <ClInclude Include="MOSFET.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Sensor Data Processing</Filter>
     </ClInclude>
     <ClInclude Include="LightSpeed.h">
-      <Filter>Header Files\Sensors</Filter>
-    </ClInclude>
-    <ClInclude Include="SpeedToTime.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Sensor Data Processing</Filter>
     </ClInclude>
     <ClInclude Include="OptiLight.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OptiLightData.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Sensor Data Processing</Filter>
     </ClInclude>
     <ClInclude Include="OptiCom.h">
+      <Filter>Header Files\Sensor Data Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="OptiLightData.h">
+      <Filter>Header Files\Sensor Data Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="RealFET.h">
+      <Filter>Header Files\FET Control</Filter>
+    </ClInclude>
+    <ClInclude Include="FETController.h">
+      <Filter>Header Files\FET Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Constants.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SensorStateRegister.h">
+      <Filter>Header Files\Sensor Data Processing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LDR.cpp">
-      <Filter>Source Files\Sensors</Filter>
-    </ClCompile>
-    <ClCompile Include="MOSFET.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Sensor Data Processing</Filter>
     </ClCompile>
     <ClCompile Include="LightSpeed.cpp">
-      <Filter>Source Files\Sensors</Filter>
-    </ClCompile>
-    <ClCompile Include="SpeedToTime.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OptiLight.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OptiLightData.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Sensor Data Processing</Filter>
     </ClCompile>
     <ClCompile Include="OptiCom.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Sensor Data Processing</Filter>
+    </ClCompile>
+    <ClCompile Include="OptiLight.cpp">
+      <Filter>Source Files\Sensor Data Processing</Filter>
+    </ClCompile>
+    <ClCompile Include="OptiLightData.cpp">
+      <Filter>Source Files\Sensor Data Processing</Filter>
+    </ClCompile>
+    <ClCompile Include="RealFET.cpp">
+      <Filter>Source Files\FET Control</Filter>
+    </ClCompile>
+    <ClCompile Include="FETController.cpp">
+      <Filter>Source Files\FET Control</Filter>
+    </ClCompile>
+    <ClCompile Include="SensorStateRegister.cpp">
+      <Filter>Source Files\Sensor Data Processing</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

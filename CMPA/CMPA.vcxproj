@@ -82,23 +82,26 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Constants.h" />
+    <ClInclude Include="FETController.h" />
     <ClInclude Include="LDR.h" />
     <ClInclude Include="LightSpeed.h" />
-    <ClInclude Include="MOSFET.h" />
     <ClInclude Include="OptiCom.h" />
     <ClInclude Include="OptiLight.h" />
     <ClInclude Include="OptiLightData.h" />
-    <ClInclude Include="SpeedToTime.h" />
+    <ClInclude Include="RealFET.h" />
+    <ClInclude Include="SensorStateRegister.h" />
     <ClInclude Include="__vm\.CMPA.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FETController.cpp" />
     <ClCompile Include="LDR.cpp" />
     <ClCompile Include="LightSpeed.cpp" />
-    <ClCompile Include="MOSFET.cpp" />
     <ClCompile Include="OptiCom.cpp" />
     <ClCompile Include="OptiLight.cpp" />
     <ClCompile Include="OptiLightData.cpp" />
-    <ClCompile Include="SpeedToTime.cpp" />
+    <ClCompile Include="RealFET.cpp" />
+    <ClCompile Include="SensorStateRegister.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

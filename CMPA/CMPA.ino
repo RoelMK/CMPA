@@ -4,27 +4,29 @@
  Author:	Roel
 */
 
+#include "SensorStateRegister.h"
+#include "FETController.h"
+#include "RealFET.h"
 #include "OptiCom.h"
 #include "OptiLightData.h"
 #include "OptiLight.h"
-#include "SpeedToTime.h"
 #include "LightSpeed.h"
-#include "MOSFET.h"
 #include "LDR.h"
 
 #pragma region Constants
-const unsigned long SERIAL_RATE = 38400;	// Serial communiciation bit 115200
-const int DELAY = 150;		// Delay (microseconds)
-const bool debug = false;	// In debug mode? (execute special loop code)
+const unsigned long SERIAL_RATE = 38400;	// Serial communiciation bit 38400
+const int DELAY = 150;						// Delay (microseconds)
+const bool debug = false;					// In debug mode? (execute special loop code)
 #pragma endregion
 
 #pragma region Objects
 LDR ldr;
-MOSFET fet;
 LightSpeed lightSpeed;
-SpeedToTime speedTime;
 OptiLight optiLight;
 OptiCom optiCom;
+RealFET realFET;
+FETController FETControl;
+SensorStateRegister SSR;
 #pragma endregion
 
 #pragma region Data
@@ -38,9 +40,9 @@ void setup()
 	Serial.begin(SERIAL_RATE);		// Init serial
 	delay(1000);
 	Serial.println("[INFO] Starting CMPA...");
-	ldr.Init(&lightSpeed);			// Init LDRs
-	fet.Init(&speedTime);			// Init FETs
-	//optiLight.Init(&lightSpeed, &optiCom);	// Init OptiLight
+	ldr.Init(&lightSpeed, &SSR);					// Init LDRs & LightSpeed
+	optiLight.Init(&optiCom);						// Init OptiLight
+	FETControl.Init(&optiLight, &SSR, &realFET);	// Init FET controller & RealFET
 	Serial.println("[INFO] CMPA is ready");
 }
 
@@ -49,41 +51,38 @@ void loop()
 {
 	if (!panic && !debug)		// Do not continue if in panic mode
 	{
-		int FETStateReal = fet.UpdateFETRealState(millis());	// Update FETs
-		if (FETStateReal != FET_OK)
-		{
-			Panic("[CRITICAL] FET failure in real-mode (power)");
-			return;
-		}
+		unsigned long startTime = micros();
 
+		// Update sensors
 		int LDRStatus = ldr.Update(millis());		// Update LDR state
-		if (LDRStatus != LDR_SENSOR_FAILURE)
-		{
-			//optiLight.Update(LDRStatus);
-			int FETStatus = fet.UpdateFETVirtualState(LDRStatus, millis(), ldr.getSpeed());	// Update FETs
-			if (FETStatus != FET_OK)
-			{
-				switch (FETStatus)
-				{
-				case CRITICAL_FET_POWER_ERROR:
-					Panic("[CRITICAL] FET power failure");
-					break;
-				case CRITICAL_FET_SELECTION_ERROR:
-					Panic("[CRITICAL] FET selection failure");
-					break;
-				default:
-					Panic("[CRITICAL] FET unknown failure");
-					break;
-				}
-			}
-			else
-			{
-				delayMicroseconds(DELAY);
-			}
-		}
-		else
+		if (LDRStatus == LDR_SENSOR_FAILURE)
 		{
 			Panic("[CRITICAL] LDR failure");
+		}
+
+		// Update FET controller & check state
+		int FETControllerState = FETControl.Update(millis());
+		if(FETControllerState != FETCONTROLLER_OK)
+		{
+			switch (FETControllerState)
+			{
+			case FETCONTROLLER_OVERSPEED:
+				Serial.println("[WARNING] Overspeed detected!");
+				break;
+			case FETCONTROLLER_REALFET_ERROR:
+				Panic("[CRITICAL] RealFET error");
+				break;
+			default:
+				Panic("[CRITICAL] Unknown error");
+				break;
+			}
+		}
+
+		// Delay
+		unsigned deltaTime = micros() - startTime;
+		if (deltaTime < DELAY)
+		{
+			delayMicroseconds(DELAY - deltaTime);
 		}
 	}
 	else if(debug)
@@ -100,7 +99,7 @@ void loop()
 // Critical error occured: go into panic mode and do not continue executing code
 void Panic(char *error)
 {
-	fet.Panic();
+	realFET.Panic();
 	panic = true;
 	Serial.println(error);
 }

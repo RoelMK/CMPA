@@ -11,19 +11,18 @@
 	#include "WProgram.h"
 #endif
 
-
-const int LDR_SENSOR_OK = -1;				// Sensors OK, no projectile found
-const int LDR_SENSOR_FAILURE = -2;			// Sensors not OK 
+#include "Constants.h"
+#include "SensorStateRegister.h"
 
 class LDR
 {
 public:
-	double getSpeed();						// Get best speed
 	int Update(unsigned long time);			// Update all sensor data
-	void Init(LightSpeed* lightSpeedPNT);	// Init LDRs
+	void Init(LightSpeed* lightSpeedPNT, SensorStateRegister *ssrPNT);	// Init LDRs
 
 private:
 	LightSpeed *lightSpeed;
+	SensorStateRegister *ssr;
 };
 
 #endif

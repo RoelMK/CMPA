@@ -230,7 +230,7 @@ String OptiCom::ConvertToSerialData()
 {
 	String toReturn = MAGIC_NUMBER_STR;
 
-	for (int s = 0; s < sensorCount; s++)
+	for (int s = 0; s < SensorCount; s++)
 	{
 		toReturn += ("|" + MAGIC_NUMBER_STR);
 		switch(s)
@@ -317,7 +317,7 @@ bool OptiCom::ConvertFromSerialInputData(String dataIn)
 
 	// Step 1. Split data on sensor level
 	bool result = SplitMultipleOptiLightSerialData(dataIn, dataSplitted, &arrayLength);
-	if (result && arrayLength > sensorCount)
+	if (result && arrayLength > SensorCount)
 	{
 		Serial.print("Array0: ");
 		Serial.println(dataSplitted[0]);
@@ -435,7 +435,7 @@ OptiLightData OptiCom::ToObject(String strData, bool *result)
 {
 	double vLow = 0;
 	double vHigh = 1023;
-	double estimatedFETopenTime = LDRlength;				// UPDATE: incorrect data!
+	double estimatedFETopenTime = 1;				// UPDATE: incorrect data!
 	double estimatedFETcloseTime;
 	double highestAcceleration = 0;
 	int tries = 0;

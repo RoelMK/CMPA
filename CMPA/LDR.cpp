@@ -4,9 +4,14 @@
 
 #include "LDR.h"
 
-void LDR::Init(LightSpeed* lightSpeedPNT)
+void LDR::Init(LightSpeed* lightSpeedPNT, SensorStateRegister *ssrPNT)
 {
-	lightSpeed = lightSpeedPNT;
+	// Set pointers
+	lightSpeed = lightSpeedPNT;	
+	ssr = ssrPNT;
+
+	// Init
+	ssr->Init();
 	Serial.println("[INFO] Calibrating...");
 	int returnCode = lightSpeed->Start();		// Start LightSpeed
 	if (returnCode != CALIBRATION_OK)			// If any error: wait for input
@@ -22,8 +27,8 @@ void LDR::Init(LightSpeed* lightSpeedPNT)
 int LDR::Update(unsigned long time)
 {
 	// Read sensor data
-	int sensorReadings[sensorCount];
-	for (int s = 0; s < sensorCount; s++)
+	int sensorReadings[SensorCount];
+	for (int s = 0; s < SensorCount; s++)
 	{
 		sensorReadings[s] = analogRead(s);
 	}
@@ -32,20 +37,20 @@ int LDR::Update(unsigned long time)
 	bool result = lightSpeed->Update(sensorReadings, time);
 	if (result)
 	{
-		//Serial.print("Detected: ");
-		//Serial.println(lightSpeed->getFET());
-		//Serial.print("Speed: ");
-		//Serial.println(lightSpeed->getSpeed());
-		return lightSpeed->getFET();
+		// Update Sensor State Register
+		ssr->SensorDetection = lightSpeed->GetSensor();
+		ssr->LastSpeed = lightSpeed->GetSpeed();
+
+		Serial.print("Detected: ");
+		Serial.println(lightSpeed->GetSensor());
+		Serial.print("Speed: ");
+		Serial.println(lightSpeed->GetSpeed());
+
+		return LDR_SENSOR_OK;
 	}
 	else
 	{
+		ssr->SensorDetection = NO_SENSOR_DETECTION;
 		return LDR_SENSOR_OK;
 	}
 }
-
-double LDR::getSpeed()
-{
-	return lightSpeed->getSpeed();
-}
-
