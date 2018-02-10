@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OptiCom.Modelling;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -11,8 +12,16 @@ namespace OptiCom
 {
     class Program
     {
+        // Modelling
+        public const bool ExportToFile = false;                     // Export modelling data to file
+        public const string FileToExportTo = "H:\\export.txt";      // File to export modelling data to 
+        private const int NumberOfFETs = 1;            // Number of FETs
+        private const int TopSpeedCMPA = 5;             // Top speed CMPA (m/s)
+        private const double DeltaVLow_VHigh = 1;       // Difference between VLow and VHigh in OptiLight data
+
+        // Arduino communication
         private const string ArduinoPortName = "COM3";  // Name of serial port
-        private const int ArduinoBitRate = 38400;      // Bit rate
+        private const int ArduinoBitRate = 38400;       // Bit rate
 
         private static SerialPort ArduinoPort = new SerialPort(ArduinoPortName, ArduinoBitRate);       // Arduino serial port properties
         private static readonly string OptiLightDataFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OptiLightData.ini";    // Folder to save OptiLight data
@@ -23,6 +32,44 @@ namespace OptiCom
         /// <param name="args">Arguments</param>
         static void Main(string[] args)
         {
+            // Check for command to generate OptiLight data
+            if(args.Length > 0)
+            {
+                if(args[0] == "-g" && args.Length > 1)
+                {
+                    StreamWriter wStream;
+
+                    try
+                    {
+                        wStream = new StreamWriter(args[1]);    
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("Failed to write to file: " + args[1]);
+                        Console.ReadKey();
+                        return;
+                    }
+
+                    OptiLightGenerator generator = new OptiLightGenerator(NumberOfFETs, TopSpeedCMPA, DeltaVLow_VHigh);
+                    bool generationResult = generator.Generate();
+                    if(generationResult)
+                    {
+                        string generatedText = generator.GetOptiLightDataArrayInOptiComFormat();
+                        wStream.WriteLine(generatedText);
+                        wStream.Close();
+                        Console.WriteLine("--- OptiLight data saved ---");
+                        return;
+                    }
+                    else
+                    {
+                        wStream.Close();
+                        Console.WriteLine("--- OptiLight data generation failed ---");
+                        return;
+                    }
+                }
+            }
+
+            // Start OptiCom
             Console.WriteLine("[INFO] Opening serial port...");
 
             // Open serial port
@@ -129,6 +176,7 @@ namespace OptiCom
                     {
                         if (File.Exists(OptiLightDataFile))
                         {
+                            Console.WriteLine("[PC] Reading and sending OptiCom data...");
                             StreamReader rStream = new StreamReader(OptiLightDataFile);
                             string data = rStream.ReadLine();
                             ArduinoPort.Write(data);

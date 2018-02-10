@@ -1,5 +1,5 @@
 // 
-// 
+// NOT WORKING!
 // 
 
 #include "OptiCom.h"
@@ -27,9 +27,17 @@ bool OptiCom::Init()
 	}
 }
 
-bool OptiCom::GetData(int sensorCoilblock, OptiLightData* data, int* arrayLength)
+
+
+bool OptiCom::SimpleSplit(String *dataIn, OptiLightData *dataOut, int *length)
 {
-	switch (sensorCoilblock)
+
+}
+
+
+bool OptiCom::GetData(int nextFET, OptiLightData* data, int* arrayLength)
+{
+	switch (nextFET)
 	{
 	case 0:
 		data = dataSensor0;
@@ -101,9 +109,9 @@ bool OptiCom::GetData(int sensorCoilblock, OptiLightData* data, int* arrayLength
 	return true;
 }
 
-void OptiCom::SetData(int sensorCoilblock, OptiLightData* data, int arrayLength)
+void OptiCom::SetData(int nextFET, OptiLightData* data, int arrayLength)
 {
-	switch (sensorCoilblock)
+	switch (nextFET)
 	{
 	case 0:
 		dataSensor0 = data;
@@ -198,6 +206,7 @@ bool OptiCom::SyncData()
 
 bool OptiCom::ExecuteOptiComCommand(String command, String *response)
 {
+	Serial.readString();
 	// Read data
 	delay(OptiComPreCommandWait);
 	Serial.println(command);
@@ -312,21 +321,22 @@ bool OptiCom::ConvertFromSerialInputData(String dataIn)
 		Serial.println("[INFO] OptiLight data is present");
 	}
 
-	String *dataSplitted;
+	String* dataSplitted;
 	int arrayLength = 0;
 
 	// Step 1. Split data on sensor level
-	bool result = SplitMultipleOptiLightSerialData(dataIn, dataSplitted, &arrayLength);
-	if (result && arrayLength > SensorCount)
+	bool result = SplitMultipleOptiLightSerialData(&dataIn, dataSplitted, &arrayLength);
+	if (result && arrayLength > 1)
 	{
+		Serial.print(arrayLength);
 		Serial.print("Array0: ");
-		Serial.println(dataSplitted[0]);
+		Serial.println(dataSplitted[1]);
 		for (int s = 1; s < arrayLength; s++)
 		{
 			// Step 2. Split data on noise threshold level
 			String *dataForSensorCoilBlock;
 			int arrayLengthForSensorCoilBlock = 0;
-			bool resultForSensorCoilBlock = SplitSensorCoilBlockOptiLightSerialData(dataSplitted[s], dataForSensorCoilBlock, &arrayLengthForSensorCoilBlock);
+			bool resultForSensorCoilBlock = SplitSensorCoilBlockOptiLightSerialData(&dataSplitted[1], dataForSensorCoilBlock, &arrayLengthForSensorCoilBlock);
 
 			// Step 3. Split data and convert to objects
 			if (resultForSensorCoilBlock && arrayLengthForSensorCoilBlock > 0)
@@ -336,7 +346,7 @@ bool OptiCom::ConvertFromSerialInputData(String dataIn)
 				for (int x = 1; x < arrayLengthForSensorCoilBlock; x++)
 				{
 					bool resultForThresholdBlock;
-					data[x] = ToObject(dataForSensorCoilBlock[x], &resultForThresholdBlock);
+					data[x] = ToObject(&dataForSensorCoilBlock[x], &resultForThresholdBlock);
 					// TODO: use resultForThresholdBlock
 				}
 
@@ -431,57 +441,56 @@ bool OptiCom::ConvertFromSerialInputData(String dataIn)
 	}
 }
 
-OptiLightData OptiCom::ToObject(String strData, bool *result)
+OptiLightData OptiCom::ToObject(String *strData, bool *result)
 {
-	double vLow = 0;
-	double vHigh = 1023;
-	double estimatedFETopenTime = 1;				// UPDATE: incorrect data!
-	double estimatedFETcloseTime;
-	double highestAcceleration = 0;
-	int tries = 0;
+	double vLow = -1;
+	double vHigh = -1;
+	double estimatedFETcloseTime = -1;
+	double highestAcceleration = -1;
+	int tries = -1;
 
-	*result = SplitSingleOptiLightSerialData(strData, &vLow, &vHigh, &estimatedFETopenTime, &estimatedFETcloseTime, &highestAcceleration, &tries);
+	*result = SplitSingleOptiLightSerialData(strData, &vLow, &vHigh, &estimatedFETcloseTime, &highestAcceleration, &tries);
 
-	OptiLightData data(vLow, vHigh, estimatedFETopenTime, estimatedFETcloseTime, highestAcceleration, tries);
+	OptiLightData data(vLow, vHigh, estimatedFETcloseTime, highestAcceleration, tries);
 	return data;
 }
 
 
 #pragma region Splitting
-bool OptiCom::SplitMultipleOptiLightSerialData(String dataIn, String *dataOut, int *arrayLength)
+bool OptiCom::SplitMultipleOptiLightSerialData(String *dataIn, String *dataOut, int *arrayLength)
 {
-	if (dataIn.indexOf("|") > 0) // = valid data
+	if (dataIn->indexOf("|") > 0) // = valid data
 	{
 		// 1. Split data 
 		int amountOfData = countChars(dataIn, '|') + 1;
 
-		String* data = new String[amountOfData]; //String data[amountOfData]; <--- is the issue
+		String* data = new String[amountOfData];
 		char separatorTokenSemicolon[] = "|";
 		
 		splitString(dataIn, separatorTokenSemicolon, data);
-
-		Serial.print("Internal1: ");
-		Serial.println(data[1]);
-
 		// 2. Check magic number
 		if (convertToInt(data[0]) != MAGIC_NUMBER)
 		{
 			delete[] data;
+			Serial.println("Invalid data: no magic number (|)");
 			return false;
 		}
 
+		Serial.println(data[1]);
+
 		// 3. Return everything
 		*arrayLength = amountOfData;
-		*dataOut = *data;		// Do not forget to clean!
+		dataOut = data;		
 
 		return true;
 	}
+	Serial.println("Invalid data: no | found");
 	return false;
 }
 
-bool OptiCom::SplitSensorCoilBlockOptiLightSerialData(String dataIn, String *dataOut, int *arrayLength)
+bool OptiCom::SplitSensorCoilBlockOptiLightSerialData(String *dataIn, String *dataOut, int *arrayLength)
 {
-	if (dataIn.indexOf("@") > 0) // = valid data
+	if (dataIn->indexOf("@") > 0) // = valid data
 	{
 		// 1. Split data 
 		int amountOfData = countChars(dataIn, '@') + 1;
@@ -496,7 +505,7 @@ bool OptiCom::SplitSensorCoilBlockOptiLightSerialData(String dataIn, String *dat
 		{
 			delete[] data;
 			Serial.print("[DEBUG] AFailed for: ");
-			Serial.println(dataIn);
+			Serial.println(*dataIn);
 			return false;
 		}
 
@@ -508,13 +517,13 @@ bool OptiCom::SplitSensorCoilBlockOptiLightSerialData(String dataIn, String *dat
 	}
 
 	Serial.print("[DEBUG] BFailed for: ");
-	Serial.println(dataIn);
+	Serial.println(*dataIn);
 	return false;
 }
 
-bool OptiCom::SplitSingleOptiLightSerialData(String strData, double *vLow, double *vHigh, double *estimatedFETopenTime, double *estimatedFETcloseTime, double *highestAcceleration, int *tries)
+bool OptiCom::SplitSingleOptiLightSerialData(String *strData, double *vLow, double *vHigh, double *estimatedFETcloseTime, double *highestAcceleration, int *tries)
 {
-	if (strData.indexOf(";") > 0) // = valid data
+	if (strData->indexOf(";") > 0) // = valid data
 	{
 		// 1. Split data 
 		int amountOfData = countChars(strData, ';') + 1;
@@ -522,7 +531,7 @@ bool OptiCom::SplitSingleOptiLightSerialData(String strData, double *vLow, doubl
 		if (amountOfData < amountOfSerialData) // Is not enough data available?
 		{
 			Serial.print("[DEBUG] AFailed for: ");
-			Serial.println(strData);
+			Serial.println(*strData);
 			return false;
 		}
 
@@ -535,17 +544,16 @@ bool OptiCom::SplitSingleOptiLightSerialData(String strData, double *vLow, doubl
 		if (convertToInt(data[0]) != MAGIC_NUMBER)
 		{
 			Serial.print("[DEBUG] BFailed for: ");
-			Serial.println(strData);
+			Serial.println(*strData);
 			return false;
 		}
 
 		// 3. Return everything
 		*vLow = convertToDouble(data[1]);
 		*vHigh = convertToDouble(data[2]);
-		*estimatedFETopenTime = convertToDouble(data[3]);
-		*estimatedFETcloseTime = convertToDouble(data[4]);
-		*highestAcceleration = convertToDouble(data[5]);
-		*tries = convertToInt(data[6]);
+		*estimatedFETcloseTime = convertToDouble(data[3]);
+		*highestAcceleration = convertToDouble(data[4]);
+		*tries = convertToInt(data[5]);
 
 		// 4. Clean and return
 		delete[] data;
@@ -553,7 +561,7 @@ bool OptiCom::SplitSingleOptiLightSerialData(String strData, double *vLow, doubl
 		return true;
 	}
 	Serial.print("[DEBUG] CFailed for: ");
-	Serial.println(strData);
+	Serial.println(*strData);
 	return false;
 }
 #pragma endregion
@@ -597,12 +605,12 @@ bool OptiCom::isValidNumber(String str) {
 }
 
 // Split a string
-void OptiCom::splitString(String strToSplit, char *separator, String *out)
+void OptiCom::splitString(String *strToSplit, char *separator, String *out)
 {
 	// Split string
-	int arrayLength = strToSplit.length() + 1;
+	int arrayLength = strToSplit->length() + 1;
 	char* chrArray = new char[arrayLength]; //char chrArray[strToSplit.length() + 1];
-	strToSplit.toCharArray(chrArray, strToSplit.length() + 1);
+	strToSplit->toCharArray(chrArray, strToSplit->length() + 1);
 
 	// Some data
 	char *token;
@@ -625,11 +633,11 @@ void OptiCom::splitString(String strToSplit, char *separator, String *out)
 }
 
 // Count number of chars in a string
-int OptiCom::countChars(String str, char charToCount)
+int OptiCom::countChars(String *str, char charToCount)
 {
-	int arrayLength = str.length() + 1;
+	int arrayLength = str->length() + 1;
 	char* chrArray = new char[arrayLength]; //char chrArray[strToSplit.length() + 1];
-	str.toCharArray(chrArray, str.length() + 1);
+	str->toCharArray(chrArray, str->length() + 1);
 
 	int x = 0;
 	int count = 0;

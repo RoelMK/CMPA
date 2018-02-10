@@ -32,6 +32,7 @@ int RealFET::Update(unsigned long time)
 		timeFETOn = timeFETOn + (time - lastTime);
 		if (timeFETOn > MAXIMAL_TIME_FET_ON)
 		{
+			Serial.println("[ERROR] REALFET_STATE_POWER_FAILURE");
 			State = REALFET_STATE_POWER_FAILURE;	// Report critical error
 			SwitchFET(LastSwitchFET, LOW);			// Turn off FET
 		}
@@ -60,6 +61,7 @@ bool RealFET::SwitchFET(int fet, uint8_t state)
 		if (SwitchFETTries > MAXIMAL_FETSWITCH_TRIES)
 		{
 			// CRITICAL ERROR: too many times same FET in SwitchFET
+			Serial.println("[ERROR] REALFET_STATE_FETSWITCH_ERROR");
 			State = REALFET_STATE_FETSWITCH_ERROR;
 			return false;
 		}
@@ -88,6 +90,12 @@ bool RealFET::SwitchFET(int fet, uint8_t state)
 
 void RealFET::SwitchPIN(int fet, uint8_t state)
 {
+	if (state == HIGH)
+	{
+		Serial.print("Powering FET: ");
+		Serial.println(fet);
+	}
+	
 	FETState[fet] = state;
 	if(!NO_FET_SWITCHING) digitalWrite(fet + FirstFETpin, state);
 }

@@ -15,10 +15,11 @@ class OptiCom
 {
 public:
 	bool Init();	
-	bool GetData(int sensorCoilblock, OptiLightData* data, int* arrayLength);
-	void SetData(int sensorCoilblock, OptiLightData* data, int arrayLength);
+	bool GetData(int nextFET, OptiLightData* data, int* arrayLength);
+	void SetData(int nextFET, OptiLightData* data, int arrayLength);
 	bool SyncData();
 private:
+
 	// Sensor data
 	OptiLightData* dataSensor0;
 	int dataSensor0Length;
@@ -64,22 +65,24 @@ private:
 	const int OptiComAfterCommandWait = 10;
 
 	// Conversion 
+	bool SimpleSplit(String *dataIn, OptiLightData *dataOut, int *length);
+
 	bool ConvertFromSerialInputData(String dataIn);
 	String ConvertToSerialData();
 	void AddObjectDataToString(String *stringToAddDataTo, OptiLightData *data, int length);
-	bool SplitSingleOptiLightSerialData(String strData, double *vLow, double *vHigh, double *estimatedFETopenTime, double *estimatedFETcloseTime, double *highestAcceleration, int *tries);
-	bool SplitSensorCoilBlockOptiLightSerialData(String dataIn, String *dataOut, int *arrayLength);
-	bool SplitMultipleOptiLightSerialData(String dataIn, String *dataOut, int *arrayLength);
-	const int amountOfSerialData = 7;
+	bool SplitSingleOptiLightSerialData(String *strData, double *vLow, double *vHigh, double *estimatedFETcloseTime, double *highestAcceleration, int *tries);
+	bool SplitSensorCoilBlockOptiLightSerialData(String *dataIn, String *dataOut, int *arrayLength);
+	bool SplitMultipleOptiLightSerialData(String *dataIn, String *dataOut, int *arrayLength);
+	const int amountOfSerialData = 6;
 	const int MAGIC_NUMBER = 255;
 	const String MAGIC_NUMBER_STR = "255";
 
 	// String <-> Object
-	OptiLightData ToObject(String strData, bool *result);
+	OptiLightData ToObject(String *strData, bool *result);
 	int convertToInt(String dataToConvert);
 	bool isValidNumber(String str);
-	void splitString(String strToSplit, char *separator, String *out);
-	int countChars(String str, char charToCount);
+	void splitString(String *strToSplit, char *separator, String *out);
+	int countChars(String *str, char charToCount);
 	double convertToDouble(String dataToConvert);
 };
 

@@ -4,21 +4,19 @@
 
 #include "OptiLightData.h"
 
-OptiLightData::OptiLightData(double vLow , double vHigh)
+OptiLightData::OptiLightData()
 {
-	VLow = vLow;
-	VHigh = vHigh;
-	EstimatedFETopenTime = 1;
-	EstimatedFETcloseTime = 2;
-	Tries = 0;
-	HighestAcceleration = 0;
+	VLow = -1;
+	VHigh = -1;
+	EstimatedFETcloseTime = -1;
+	Tries = -1;
+	HighestAcceleration = -1;
 }
 
-OptiLightData::OptiLightData(double vLow, int vHigh, double estimatedFETopenTime, double estimatedFETcloseTime, double highestAcceleration, int tries)
+OptiLightData::OptiLightData(double vLow, int vHigh, double estimatedFETcloseTime, double highestAcceleration, int tries)
 {
 	VLow = vLow;
 	VHigh = vHigh;
-	EstimatedFETopenTime = estimatedFETopenTime;
 	EstimatedFETcloseTime = estimatedFETcloseTime;
 	HighestAcceleration = highestAcceleration;
 	Tries = tries;
@@ -26,6 +24,6 @@ OptiLightData::OptiLightData(double vLow, int vHigh, double estimatedFETopenTime
 
 String OptiLightData::ToString()
 {
-	return VLow + String(";") + VHigh + ";" + EstimatedFETopenTime + ";" + EstimatedFETcloseTime + ";" + HighestAcceleration + ";" + Tries;
+	return VLow + String(";") + VHigh + ";" + EstimatedFETcloseTime + ";" + HighestAcceleration + ";" + Tries;
 }
 

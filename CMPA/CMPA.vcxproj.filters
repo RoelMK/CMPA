@@ -25,6 +25,12 @@
     <Filter Include="Source Files\FET Control">
       <UniqueIdentifier>{4911f616-8b43-46ee-a91d-a563a01be20f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Not working">
+      <UniqueIdentifier>{cca8df13-85d0-48e1-994f-916a0a7e94d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Not working">
+      <UniqueIdentifier>{ff6a4f94-730e-43fe-b6ce-09fc0454d3c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="CMPA.ino" />
@@ -42,12 +48,6 @@
     <ClInclude Include="OptiLight.h">
       <Filter>Header Files\Sensor Data Processing</Filter>
     </ClInclude>
-    <ClInclude Include="OptiCom.h">
-      <Filter>Header Files\Sensor Data Processing</Filter>
-    </ClInclude>
-    <ClInclude Include="OptiLightData.h">
-      <Filter>Header Files\Sensor Data Processing</Filter>
-    </ClInclude>
     <ClInclude Include="RealFET.h">
       <Filter>Header Files\FET Control</Filter>
     </ClInclude>
@@ -60,6 +60,12 @@
     <ClInclude Include="SensorStateRegister.h">
       <Filter>Header Files\Sensor Data Processing</Filter>
     </ClInclude>
+    <ClInclude Include="OptiCom.h">
+      <Filter>Header Files\Not working</Filter>
+    </ClInclude>
+    <ClInclude Include="OptiLightData.h">
+      <Filter>Header Files\Not working</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LDR.cpp">
@@ -68,13 +74,7 @@
     <ClCompile Include="LightSpeed.cpp">
       <Filter>Source Files\Sensor Data Processing</Filter>
     </ClCompile>
-    <ClCompile Include="OptiCom.cpp">
-      <Filter>Source Files\Sensor Data Processing</Filter>
-    </ClCompile>
     <ClCompile Include="OptiLight.cpp">
-      <Filter>Source Files\Sensor Data Processing</Filter>
-    </ClCompile>
-    <ClCompile Include="OptiLightData.cpp">
       <Filter>Source Files\Sensor Data Processing</Filter>
     </ClCompile>
     <ClCompile Include="RealFET.cpp">
@@ -85,6 +85,12 @@
     </ClCompile>
     <ClCompile Include="SensorStateRegister.cpp">
       <Filter>Source Files\Sensor Data Processing</Filter>
+    </ClCompile>
+    <ClCompile Include="OptiLightData.cpp">
+      <Filter>Source Files\Not working</Filter>
+    </ClCompile>
+    <ClCompile Include="OptiCom.cpp">
+      <Filter>Source Files\Not working</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

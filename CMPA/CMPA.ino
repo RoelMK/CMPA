@@ -37,11 +37,11 @@ bool panic = false;			// In panic mode?
 // The setup function runs once when you press reset or power the board
 void setup() 
 {
-	Serial.begin(SERIAL_RATE);		// Init serial
+	Serial.begin(SERIAL_RATE);						// Init serial
 	delay(1000);
 	Serial.println("[INFO] Starting CMPA...");
-	ldr.Init(&lightSpeed, &SSR);					// Init LDRs & LightSpeed
-	optiLight.Init(&optiCom);						// Init OptiLight
+	ldr.Init(&lightSpeed, &SSR);					// Init LDRs & LightSpeed & SSR
+	optiLight.Init(&optiCom);						// Init OptiLight & OptiCom
 	FETControl.Init(&optiLight, &SSR, &realFET);	// Init FET controller & RealFET
 	Serial.println("[INFO] CMPA is ready");
 }
@@ -77,6 +77,9 @@ void loop()
 				break;
 			}
 		}
+
+		// Update OptiLight
+		// TODO
 
 		// Delay
 		unsigned deltaTime = micros() - startTime;

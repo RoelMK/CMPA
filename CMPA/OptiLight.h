@@ -16,13 +16,21 @@
 class OptiLight
 {
 public:
-	void Init(OptiCom *optiComPNT);		// Init OptiLight
-	void Update(int LDRStatus);										// Update OptiLight
-	double GetFETOnTime(int FET, double speed);						// Estimate FET power time
+	void Init(OptiCom *optiComPNT);						// Init OptiLight
+	void Update();										// Update OptiLight
+	double GetFETOnTime(int FET, double speed);			// Estimate FET power time
 private:
-	OptiCom *optiCom;
+	OptiCom *optiCom;									// Pointer to OptiCom
+	double GetPrimitiveTimeData(int FET, double speed);	// Get primitive FET power time (using speed/distance)
 
-	// Distance between LDR and coil cenbter
+	bool optiLightWorking;								// Is OptiLight working?
+	const int speedLevels = 5;							// Number of 'speedLevels' ~ speed blocks
+	const double OptiLightConstants[5][3] = { { 0.0,1.0,0.10744 },{ 1.0,2.0,0.07020 },{ 2.0,3.0,0.05495 },{ 3.0,4.0,0.04533 },{ 4.0,5.0,0.03856 } };	// Constants
+	const int OPTILIGHT_VLOW = 0;						// VLow ID
+	const int OPTILIGHT_VHIGH = 1;						// VHigh ID
+	const int OPTILIGHT_ESTIMATED_FETOFF_TIME = 3;		// Estimated turn off time ID
+
+	// Distance between LDR and coil center
 	const double default_distance = 0.2628;			// All distances are in meters
 
 	const double LDR0_DTNC = 0.4228;	// LDR0 = exit, DTNC = Distance to next coil (in m) R

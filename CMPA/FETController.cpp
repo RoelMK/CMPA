@@ -5,6 +5,8 @@
 #include "FETController.h"
 void FETController::Init(OptiLight *optiLightPNT, SensorStateRegister *ssrPNT, RealFET *realFETPnt)
 {
+	fetToTurnOn = NO_FET_POWERED;
+
 	// Set pointers
 	optiLight = optiLightPNT;
 	ssr = ssrPNT;
@@ -127,7 +129,7 @@ void FETController::UpdateTimer(unsigned long time)
 
 int FETController::GetEstimatedFETOnTime(int fet, double speed)
 {
-	// OptiLight
+	return optiLight->GetFETOnTime(fet, speed) * 1000;
 }
 
 int FETController::GetNextFET(int sensor)
