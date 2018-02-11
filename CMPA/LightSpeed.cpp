@@ -116,6 +116,11 @@ int LightSpeed::Start()
 			deltaSensor = maxDifferenceBetweenLightAndDark;
 		}
 
+		if (sensorUNoise[s] > defaultNoise)
+		{
+			sensorUNoise[s] = defaultNoise;		// Set max noise
+		}
+
 		sensorDetectionThreshold[s] = sensorUMax[s] - ((deltaSensor) / 2);						// Calculate detection threshold
 		sensorNoiseThreshold[s] = sensorUMax[s] - sensorUNoise[s] - defaultNoise;				// Calculate noise threshold
 		
