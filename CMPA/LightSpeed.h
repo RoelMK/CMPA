@@ -72,7 +72,7 @@ private:
 	const int minimalResistanceLDR = 2500;					// Minimal resistance which a LDR should have (in Ohm). If it is higher, CMPA will show a warning
 
 	const int defaultNoise = 10;						// 'Default noise'
-	const int maxDifferenceBetweenLightAndDark = 200;	// Maximal difference between light and dark
+	const int maxDifferenceBetweenLightAndDark = 150;	// Maximal difference between light and dark
 };
 
 
