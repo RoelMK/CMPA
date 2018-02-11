@@ -6,27 +6,51 @@
 
 void OptiLight::Init(OptiCom *optiComPNT)
 {
-	//optiCom = optiComPNT;
-	//bool result = optiCom->Init();	// Start OptiCom
-	//if (!result)
-	//{
-	//	Serial.println("[INFO] Failed to load OptiLight data");
-	//	optiLightWorking = false;
-	//	//OptiLightData newData = OptiLightData(0, 1200, 0.0015, 0, 0);
-	//	//for (int s = 0; s < SensorCount; s++)
-	//	//{
-	//	//	optiCom->SetData(s, &newData, 1);
-	//	//}
-	//	//optiCom->SyncData();
-	//}
-	//else
-	//{
-	//	Serial.println("[INFO] OptiLight data loaded");
-	//	optiLightWorking = true;
-	//}
+	optiCom = optiComPNT;
+	bool result = optiCom->Init();	// Start OptiCom
+	if (!result)
+	{
+		Serial.println("[INFO] Failed to load OptiLight data");
+		optiComWorking = false;
+	}
+	else
+	{
+		Serial.println("[INFO] OptiLight data loaded");
+
+		//double estimatedFETOff = -1;
+		//double hs = -1;
+		//optiCom->GetData(1.0, &estimatedFETOff, &hs);
+		//Serial.print("Test: ");
+		//Serial.println(estimatedFETOff);
+		//optiCom->SetData(1.0, estimatedFETOff + 1, hs);
+		//Serial.println("Sync: ");
+		//Serial.println(optiCom->SyncData());
+
+		optiComWorking = true;
+	}
 }
 
 double OptiLight::GetFETOnTime(int FET, double speed)
+{
+	// Try OptiCom data first
+	if (optiComWorking)
+	{
+		// Load data
+		double estimatedTime = -1;
+		bool result = optiCom->GetData(speed, &estimatedTime);
+
+		// Return
+		if (result && estimatedTime > 0) return estimatedTime;
+	}
+
+	Serial.print("[WARNING] Failed to load OptiCom data for FET");
+	Serial.print(FET);
+	Serial.print(", speed: ");
+	Serial.println(speed);
+	return GetBackupFETOnTime(FET, speed);
+}
+
+double OptiLight::GetBackupFETOnTime(int FET, double speed)
 {
 	// Is speed data available?
 	if (speed < OptiLightConstants[speedLevels - 1][OPTILIGHT_VHIGH])
@@ -62,49 +86,6 @@ void OptiLight::Update()
 {
 	// TODO: self-optimizing algorithm
 }
-//
-//double OptiLight::GetFETOnTime(int FET, double speed)
-//{
-//	// Not working? Return primitive data
-//	if (!optiLightWorking)
-//	{
-//		return GetPrimitiveTimeData(FET, speed);
-//	}
-//
-//	// Load OptiLight data
-//	int tmpArrayLength;									// Length OptiLight data array
-//	OptiLightData *tmpData;								// Data array
-//	optiCom->GetData(FET, tmpData, &tmpArrayLength);	// Load data
-//
-//	// Is speed data available?
-//	if (tmpData[tmpArrayLength - 1].VHigh >= speed)
-//	{
-//		// Yes: return data for correct speed
-//		for (int vLevel = 0; vLevel < tmpArrayLength; vLevel++)
-//		{
-//			// Find OptiLight data
-//			if (speed >= tmpData[vLevel].VLow && speed < tmpData[vLevel].VHigh)
-//			{
-//				return tmpData[vLevel].EstimatedFETcloseTime;
-//			}
-//		}
-//		// Failed to find OptiLight data, return primitive data
-//		Serial.print("[WARNING] Failed to load OptiLight data for FET");
-//		Serial.print(FET);
-//		Serial.print(", speed: ");
-//		Serial.println(speed);
-//		return GetPrimitiveTimeData(FET, speed);
-//	}
-//	else
-//	{
-//		// No: return data for highest speed
-//		Serial.print("[WARNING] Overspeed, failed to load OptiLight data for FET");
-//		Serial.print(FET);
-//		Serial.print(", speed: ");
-//		Serial.println(speed);
-//		return tmpData[tmpArrayLength - 1].EstimatedFETcloseTime;
-//	}
-//}
 
 double OptiLight::GetPrimitiveTimeData(int FET, double speed)
 {

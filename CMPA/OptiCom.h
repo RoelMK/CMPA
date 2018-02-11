@@ -14,76 +14,51 @@
 class OptiCom
 {
 public:
-	bool Init();	
-	bool GetData(int nextFET, OptiLightData* data, int* arrayLength);
-	void SetData(int nextFET, OptiLightData* data, int arrayLength);
-	bool SyncData();
+	bool Init();																			// Init OptiCom
+	bool GetData(double speed, double *estimatedFETOffTime);								// Get OptiCom data for speed ...
+	bool GetData(double speed, double *estimatedFETOffTime, double *highestAcceleration);	// Get OptiCom data for speed ... and also return the highestAcceleration
+	void SetData(double speed, double estimatedFETOffTime, double highestAcceleration);		// Set OptiCom data for speed ...
+	void SetData(int ID, double estimatedFETOffTime, double highestAcceleration);			// Set OptiCom data for ID ...
+	bool SyncData();																		// Send OptiCom data to PC
 private:
-
-	// Sensor data
-	OptiLightData* dataSensor0;
-	int dataSensor0Length;
-	OptiLightData* dataSensor1;
-	int dataSensor1Length;
-	OptiLightData* dataSensor2;
-	int dataSensor2Length;
-	OptiLightData* dataSensor3;
-	int dataSensor3Length;
-	OptiLightData* dataSensor4;
-	int dataSensor4Length;
-	OptiLightData* dataSensor5;
-	int dataSensor5Length;
-	OptiLightData* dataSensor6;
-	int dataSensor6Length;
-	OptiLightData* dataSensor7;
-	int dataSensor7Length;
-	OptiLightData* dataSensor8;
-	int dataSensor8Length;
-	OptiLightData* dataSensor9;
-	int dataSensor9Length;
-	OptiLightData* dataSensor10;
-	int dataSensor10Length;
-	OptiLightData* dataSensor11;
-	int dataSensor11Length;
-	OptiLightData* dataSensor12;
-	int dataSensor12Length;
-	OptiLightData* dataSensor13;
-	int dataSensor13Length;
-	OptiLightData* dataSensor14;
-	int dataSensor14Length;
-	OptiLightData* dataSensor15;
-	int dataSensor15Length;
+	double *VLow;					// VLow array
+	double *VHigh;					// VHigh array
+	double *EstimatedFETOffTime;	// EstimatedFETOffTime array
+	double *HighestAcceleration;	// Highest acceleration array
+	int *Tries;						// Tries array
+	int NumberOfSpeedBlocks;		// Length of array
 
 	// OptiCom
-	bool ExecuteOptiComCommand(String command, String *response);
+	bool ExecuteOptiComCommand(String command, String *response);	// Execute OptiCom command, can falsely return false when syncing
 
-	const String OptiComGetData = "*G%";
-	const String OptiComGetResponseNODATA = "NODATA";
-	const String OptiComSetData = "*S%";
-	const String OptiComSetResponseOK = "SETOK";
-	const int OptiComPreCommandWait = 10;
-	const int OptiComAfterCommandWait = 10;
+	const String OptiComGetData = "*G%";							// Command: get data
+	const String OptiComGetResponseNODATA = "NODATA";				// Response: no data available
+	const String OptiComSetData = "*S%";							// Command: set data
+	const String OptiComSetResponseOK = "SETOK";					// Response: data set
+	const int OptiComPreCommandWait = 10;							// Ms to wait before executing command
+	const int OptiComAfterCommandWait = 10;							// Ms to wait after executing command
 
 	// Conversion 
-	bool SimpleSplit(String *dataIn, OptiLightData *dataOut, int *length);
+	String *SingleOptiLightSerialData;				// Pointer to data from SplitSingleOptiLightSerialData
+	String *SensorCoilBlockOptiLightSerialData;		// Pointer to data from SplitSensorCoilBlockOptiLightSerialData
 
-	bool ConvertFromSerialInputData(String dataIn);
-	String ConvertToSerialData();
-	void AddObjectDataToString(String *stringToAddDataTo, OptiLightData *data, int length);
-	bool SplitSingleOptiLightSerialData(String *strData, double *vLow, double *vHigh, double *estimatedFETcloseTime, double *highestAcceleration, int *tries);
-	bool SplitSensorCoilBlockOptiLightSerialData(String *dataIn, String *dataOut, int *arrayLength);
-	bool SplitMultipleOptiLightSerialData(String *dataIn, String *dataOut, int *arrayLength);
-	const int amountOfSerialData = 6;
-	const int MAGIC_NUMBER = 255;
-	const String MAGIC_NUMBER_STR = "255";
+	bool UpdateLocalData(String *dataIn);			// Update local data using serial input 
+	String ConvertToSerialData();					// Convert local data to serial output
+	void AddObjectDataToString(String *stringToAddDataTo, double *vLow, double *vHigh, double *estimatedFETOffTime, double *highestAcceleration, int *tries, int length);	// Convert OptiCom data to string
+	bool SplitSingleOptiLightSerialData(String *strData, double *vLow, double *vHigh, double *estimatedFETcloseTime, double *highestAcceleration, int *tries);				// Split at sensor coil block level
+	bool SplitSensorCoilBlockOptiLightSerialData(String *dataIn, int *arrayLength);			// Split at speed block level
+	bool SplitMultipleOptiLightSerialData(String *dataIn, int *arrayLength);				// Split at FET level (not supported)
+	const int amountOfSerialData = 6;			// Amount of serial data per speed block
+	const int MAGIC_NUMBER = 255;				// Magic number: for verification
+	const String MAGIC_NUMBER_STR = "255";		// String of magic number
 
 	// String <-> Object
-	OptiLightData ToObject(String *strData, bool *result);
-	int convertToInt(String dataToConvert);
-	bool isValidNumber(String str);
-	void splitString(String *strToSplit, char *separator, String *out);
-	int countChars(String *str, char charToCount);
-	double convertToDouble(String dataToConvert);
+	bool ToOptiLightData(String *strData, double *vLow, double *vHigh, double *estimatedFETOffTime, double *highestAcceleration, int *tries);	// Convert string to OptiLight data
+	int convertToInt(String dataToConvert);								// Convert string to int
+	bool isValidNumber(String str);										// Is string number?
+	void splitString(String *strToSplit, char *separator, String *out);	// Split a string
+	int countChars(String *str, char charToCount);						// Count chars in string
+	double convertToDouble(String dataToConvert);						// Convert string to double
 };
 
 #endif

@@ -12,14 +12,12 @@ bool OptiCom::Init()
 	bool result = ExecuteOptiComCommand(OptiComGetData, &response);
 	Serial.print("[INFO] OptiCom result: ");
 	Serial.println(result);
-	Serial.print("[INFO] OptiCom response: ");
-	Serial.println(response);
-	
 
 	// Init data and return
 	if (result)
 	{
-		return ConvertFromSerialInputData(response);
+		Serial.print("[INFO] Updating local data");
+		return UpdateLocalData(&response);
 	}
 	else
 	{
@@ -27,158 +25,62 @@ bool OptiCom::Init()
 	}
 }
 
-
-
-bool OptiCom::SimpleSplit(String *dataIn, OptiLightData *dataOut, int *length)
+bool OptiCom::GetData(double speed, double *estimatedFETOffTime)
 {
-
+	double tmp;
+	return GetData(speed, estimatedFETOffTime, &tmp);
 }
 
-
-bool OptiCom::GetData(int nextFET, OptiLightData* data, int* arrayLength)
+bool OptiCom::GetData(double speed, double *estimatedFETOffTime, double *highestAcceleration)
 {
-	switch (nextFET)
+	// Is speed data available?
+	if (speed < VHigh[NumberOfSpeedBlocks - 1])
 	{
-	case 0:
-		data = dataSensor0;
-		arrayLength = &dataSensor0Length;
-		break;
-	case 1:
-		data = dataSensor1;
-		arrayLength = &dataSensor1Length;
-		break;
-	case 2:
-		data = dataSensor2;
-		arrayLength = &dataSensor2Length;
-		break;
-	case 3:
-		data = dataSensor3;
-		arrayLength = &dataSensor3Length;
-		break;
-	case 4:
-		data = dataSensor4;
-		arrayLength = &dataSensor4Length;
-		break;
-	case 5:
-		data = dataSensor5;
-		arrayLength = &dataSensor5Length;
-		break;
-	case 6:
-		data = dataSensor6;
-		arrayLength = &dataSensor6Length;
-		break;
-	case 7:
-		data = dataSensor7;
-		arrayLength = &dataSensor7Length;
-		break;
-	case 8:
-		data = dataSensor8;
-		arrayLength = &dataSensor8Length;
-		break;
-	case 9:
-		data = dataSensor9;
-		arrayLength = &dataSensor9Length;
-		break;
-	case 10:
-		data = dataSensor10;
-		arrayLength = &dataSensor10Length;
-		break;
-	case 11:
-		data = dataSensor11;
-		arrayLength = &dataSensor11Length;
-		break;
-	case 12:
-		data = dataSensor12;
-		arrayLength = &dataSensor12Length;
-		break;
-	case 13:
-		data = dataSensor13;
-		arrayLength = &dataSensor13Length;
-		break;
-	case 14:
-		data = dataSensor14;
-		arrayLength = &dataSensor14Length;
-		break;
-	case 15:
-		data = dataSensor15;
-		arrayLength = &dataSensor15Length;
-		break;
-	default:
+		for (int i = 0; i < NumberOfSpeedBlocks; i++)
+		{
+			Serial.print(VLow[i]);
+			Serial.print(" - ");
+			Serial.print(VHigh[i]);
+			Serial.print(": ");
+			Serial.println(EstimatedFETOffTime[i]);
+			// Yes: return data for correct speed
+			if (speed >= VLow[i] && speed < VHigh[i])
+			{
+				*estimatedFETOffTime = EstimatedFETOffTime[i];
+				*highestAcceleration = HighestAcceleration[i];
+				return true;
+			}
+		}
+		Serial.print("[WARNING] Failed to load OptiLight data for FET, speed: ");
+		Serial.println(speed);
 		return false;
 	}
-	return true;
+	else
+	{
+		Serial.print("[WARNING] Overspeed, failed to load OptiLight data for FET, speed: ");
+		Serial.println(speed);
+		return false;
+	}
 }
 
-void OptiCom::SetData(int nextFET, OptiLightData* data, int arrayLength)
+void OptiCom::SetData(double speed, double estimatedFETOffTime, double highestAcceleration)
 {
-	switch (nextFET)
+	for (int i = 0; i < NumberOfSpeedBlocks; i++)
 	{
-	case 0:
-		dataSensor0 = data;
-		dataSensor0Length = arrayLength;
-		break;
-	case 1:
-		dataSensor1 = data;
-		dataSensor1Length = arrayLength;
-		break;
-	case 2:
-		dataSensor2 = data;
-		dataSensor2Length = arrayLength;
-		break;
-	case 3:
-		dataSensor3 = data;
-		dataSensor3Length = arrayLength;
-		break;
-	case 4:
-		dataSensor4 = data;
-		dataSensor4Length = arrayLength;
-		break;
-	case 5:
-		dataSensor5 = data;
-		dataSensor5Length = arrayLength;
-		break;
-	case 6:
-		dataSensor6 = data;
-		dataSensor6Length = arrayLength;
-		break;
-	case 7:
-		dataSensor7 = data;
-		dataSensor7Length = arrayLength;
-		break;
-	case 8:
-		dataSensor8 = data;
-		dataSensor8Length = arrayLength;
-		break;
-	case 9:
-		dataSensor9 = data;
-		dataSensor9Length = arrayLength;
-		break;
-	case 10:
-		dataSensor10 = data;
-		dataSensor10Length = arrayLength;
-		break;
-	case 11:
-		dataSensor11 = data;
-		dataSensor11Length = arrayLength;
-		break;
-	case 12:
-		dataSensor12 = data;
-		dataSensor12Length = arrayLength;
-		break;
-	case 13:
-		dataSensor13 = data;
-		dataSensor13Length = arrayLength;
-		break;
-	case 14:
-		dataSensor14 = data;
-		dataSensor14Length = arrayLength;
-		break;
-	case 15:
-		dataSensor15 = data;
-		dataSensor15Length = arrayLength;
-		break;
-	default:
-		break;
+		if (speed >= VLow[i] && speed < VHigh[i])
+		{
+			SetData(i, estimatedFETOffTime, highestAcceleration);
+		}
+	}
+}
+
+void OptiCom::SetData(int ID, double estimatedFETOffTime, double highestAcceleration)
+{
+	if (ID < NumberOfSpeedBlocks)
+	{
+		EstimatedFETOffTime[ID] = estimatedFETOffTime;
+		Tries[ID] += 1;
+		HighestAcceleration[ID] = highestAcceleration;
 	}
 }
 
@@ -238,80 +140,23 @@ bool OptiCom::ExecuteOptiComCommand(String command, String *response)
 String OptiCom::ConvertToSerialData()
 {
 	String toReturn = MAGIC_NUMBER_STR;
-
-	for (int s = 0; s < SensorCount; s++)
-	{
-		toReturn += ("|" + MAGIC_NUMBER_STR);
-		switch(s)
-		{
-		case 0:
-			AddObjectDataToString(&toReturn, dataSensor0, dataSensor0Length);
-			break;
-		case 1:
-			AddObjectDataToString(&toReturn, dataSensor1, dataSensor1Length);
-			break;
-		case 2:
-			AddObjectDataToString(&toReturn, dataSensor2, dataSensor2Length);
-			break;
-		case 3:
-			AddObjectDataToString(&toReturn, dataSensor3, dataSensor3Length);
-			break;
-		case 4:
-			AddObjectDataToString(&toReturn, dataSensor4, dataSensor4Length);
-			break;
-		case 5:
-			AddObjectDataToString(&toReturn, dataSensor5, dataSensor5Length);
-			break;
-		case 6:
-			AddObjectDataToString(&toReturn, dataSensor6, dataSensor6Length);
-			break;
-		case 7:
-			AddObjectDataToString(&toReturn, dataSensor7, dataSensor7Length);
-			break;
-		case 8:
-			AddObjectDataToString(&toReturn, dataSensor8, dataSensor8Length);
-			break;
-		case 9:
-			AddObjectDataToString(&toReturn, dataSensor9, dataSensor9Length);
-			break;
-		case 10:
-			AddObjectDataToString(&toReturn, dataSensor10, dataSensor10Length);
-			break;
-		case 11:
-			AddObjectDataToString(&toReturn, dataSensor11, dataSensor11Length);
-			break;
-		case 12:
-			AddObjectDataToString(&toReturn, dataSensor12, dataSensor12Length);
-			break;
-		case 13:
-			AddObjectDataToString(&toReturn, dataSensor13, dataSensor13Length);
-			break;
-		case 14:
-			AddObjectDataToString(&toReturn, dataSensor14, dataSensor14Length);
-			break;
-		case 15:
-			AddObjectDataToString(&toReturn, dataSensor15, dataSensor15Length);
-			break;
-		default:
-			break;
-		}
-	}
-
+	toReturn += ("|" + MAGIC_NUMBER_STR);	// Old syntax (for FET level support, needs for() loop)
+	AddObjectDataToString(&toReturn, VLow, VHigh, EstimatedFETOffTime, HighestAcceleration, Tries, NumberOfSpeedBlocks);
 	return toReturn;
 }
 
-void OptiCom::AddObjectDataToString(String *stringToAddDataTo, OptiLightData *data, int length)
+void OptiCom::AddObjectDataToString(String *stringToAddDataTo, double *vLow, double *vHigh, double *estimatedFETOffTime, double *highestAcceleration, int *tries, int length)
 {
 	for (int x = 0; x < length; x++)
 	{
-		*stringToAddDataTo += "@" + MAGIC_NUMBER_STR + ";" + data[x].ToString();
+		*stringToAddDataTo += "@" + MAGIC_NUMBER_STR + ";" + String(vLow[x], 2) + ";" + String(vHigh[x], 2) + ";" + String(estimatedFETOffTime[x], 3) + ";" + String(highestAcceleration[x], 3) + ";" + String(tries[x]);
 	}
 }
 
-bool OptiCom::ConvertFromSerialInputData(String dataIn)
+bool OptiCom::UpdateLocalData(String *dataIn)
 {
 	// Is data OK?
-	if (dataIn.indexOf("|") < 1)
+	if (dataIn->indexOf("|") < 1)
 	{
 		Serial.println("[INFO] OptiLight data is not present");
 		return false;
@@ -321,117 +166,54 @@ bool OptiCom::ConvertFromSerialInputData(String dataIn)
 		Serial.println("[INFO] OptiLight data is present");
 	}
 
-	String* dataSplitted;
 	int arrayLength = 0;
 
-	// Step 1. Split data on sensor level
-	bool result = SplitMultipleOptiLightSerialData(&dataIn, dataSplitted, &arrayLength);
+	// Step 1. Split data on FET level
+	bool result = SplitMultipleOptiLightSerialData(dataIn, &arrayLength);
 	if (result && arrayLength > 1)
 	{
-		Serial.print(arrayLength);
-		Serial.print("Array0: ");
-		Serial.println(dataSplitted[1]);
 		for (int s = 1; s < arrayLength; s++)
 		{
-			// Step 2. Split data on noise threshold level
-			String *dataForSensorCoilBlock;
+			// Step 2. Split data on speed block level
 			int arrayLengthForSensorCoilBlock = 0;
-			bool resultForSensorCoilBlock = SplitSensorCoilBlockOptiLightSerialData(&dataSplitted[1], dataForSensorCoilBlock, &arrayLengthForSensorCoilBlock);
+			bool resultForSensorCoilBlock = SplitSensorCoilBlockOptiLightSerialData(&SingleOptiLightSerialData[s], &arrayLengthForSensorCoilBlock);
 
-			// Step 3. Split data and convert to objects
+			// Step 3. Split data and convert to usuable data
 			if (resultForSensorCoilBlock && arrayLengthForSensorCoilBlock > 0)
 			{
-				OptiLightData *data;
+				VLow = new double[arrayLengthForSensorCoilBlock - 1];
+				VHigh = new double[arrayLengthForSensorCoilBlock - 1];
+				EstimatedFETOffTime = new double[arrayLengthForSensorCoilBlock - 1];
+				HighestAcceleration = new double[arrayLengthForSensorCoilBlock - 1];
+				Tries = new int[arrayLengthForSensorCoilBlock - 1];
+				NumberOfSpeedBlocks = arrayLengthForSensorCoilBlock - 1;
 
 				for (int x = 1; x < arrayLengthForSensorCoilBlock; x++)
 				{
-					bool resultForThresholdBlock;
-					data[x] = ToObject(&dataForSensorCoilBlock[x], &resultForThresholdBlock);
-					// TODO: use resultForThresholdBlock
+					//Serial.print("(");
+					//Serial.print(x);
+					//Serial.print("/");
+					//Serial.print(arrayLengthForSensorCoilBlock);
+					//Serial.print("): ");
+					//Serial.println(SensorCoilBlockOptiLightSerialData[x]);
+					bool resultForSpeedBlock = ToOptiLightData(&SensorCoilBlockOptiLightSerialData[x], &VLow[x - 1], &VHigh[x - 1], &EstimatedFETOffTime[x - 1], &HighestAcceleration[x - 1], &Tries[x - 1]);
+					if (!resultForSpeedBlock)
+					{
+						Serial.println("[WARNING] Corrupt speed block found");
+					}
 				}
-
-				// Store data
-				switch (s)
-				{
-				case 1:
-					dataSensor0 = data;
-					dataSensor0Length = arrayLengthForSensorCoilBlock - 1;
-					break;
-				case 2:
-					dataSensor1 = data;
-					dataSensor1Length = arrayLengthForSensorCoilBlock - 1;
-					break;
-				case 3:
-					dataSensor2 = data;
-					dataSensor2Length = arrayLengthForSensorCoilBlock - 1;
-					break;
-				case 4:
-					dataSensor3 = data;
-					dataSensor3Length = arrayLengthForSensorCoilBlock - 1;
-					break;
-				case 5:
-					dataSensor4 = data;
-					dataSensor4Length = arrayLengthForSensorCoilBlock - 1;
-					break;
-				case 6:
-					dataSensor5 = data;
-					dataSensor5Length = arrayLengthForSensorCoilBlock - 1;
-					break;
-				case 7:
-					dataSensor6 = data;
-					dataSensor6Length = arrayLengthForSensorCoilBlock - 1;
-					break;
-				case 8:
-					dataSensor7 = data;
-					dataSensor7Length = arrayLengthForSensorCoilBlock - 1;
-					break;
-				case 9:
-					dataSensor8 = data;
-					dataSensor8Length = arrayLengthForSensorCoilBlock - 1;
-					break;
-				case 10:
-					dataSensor9 = data;
-					dataSensor9Length = arrayLengthForSensorCoilBlock - 1;
-					break;
-				case 11:
-					dataSensor10 = data;
-					dataSensor10Length = arrayLengthForSensorCoilBlock - 1;
-					break;
-				case 12:
-					dataSensor11 = data;
-					dataSensor11Length = arrayLengthForSensorCoilBlock - 1;
-					break;
-				case 13:
-					dataSensor12 = data;
-					dataSensor12Length = arrayLengthForSensorCoilBlock - 1;
-					break;
-				case 14:
-					dataSensor13 = data;
-					dataSensor13Length = arrayLengthForSensorCoilBlock - 1;
-					break;
-				case 15:
-					dataSensor14 = data;
-					dataSensor14Length = arrayLengthForSensorCoilBlock - 1;
-					break;
-				case 16:
-					dataSensor15 = data;
-					dataSensor15Length = arrayLengthForSensorCoilBlock - 1;
-					break;
-				default:
-					break;
-				}
-
-				delete[] dataForSensorCoilBlock;
 			}
 			else
 			{
 				Serial.println("[WARNING] Corrupt OptiLight data");
-				delete[] dataSplitted;
+				delete[] SingleOptiLightSerialData;
+				delete[] SensorCoilBlockOptiLightSerialData;
 				return false;
 			}
 		}
 
-		delete[] dataSplitted;
+		delete[] SingleOptiLightSerialData;
+		delete[] SensorCoilBlockOptiLightSerialData;
 		return true;
 	}
 	else
@@ -441,23 +223,14 @@ bool OptiCom::ConvertFromSerialInputData(String dataIn)
 	}
 }
 
-OptiLightData OptiCom::ToObject(String *strData, bool *result)
+bool OptiCom::ToOptiLightData(String *strData, double *vLow, double *vHigh, double *estimatedFETOffTime, double *highestAcceleration, int *tries)
 {
-	double vLow = -1;
-	double vHigh = -1;
-	double estimatedFETcloseTime = -1;
-	double highestAcceleration = -1;
-	int tries = -1;
-
-	*result = SplitSingleOptiLightSerialData(strData, &vLow, &vHigh, &estimatedFETcloseTime, &highestAcceleration, &tries);
-
-	OptiLightData data(vLow, vHigh, estimatedFETcloseTime, highestAcceleration, tries);
-	return data;
+	return SplitSingleOptiLightSerialData(strData, vLow, vHigh, estimatedFETOffTime, highestAcceleration, tries);
 }
 
 
 #pragma region Splitting
-bool OptiCom::SplitMultipleOptiLightSerialData(String *dataIn, String *dataOut, int *arrayLength)
+bool OptiCom::SplitMultipleOptiLightSerialData(String *dataIn, int *arrayLength)
 {
 	if (dataIn->indexOf("|") > 0) // = valid data
 	{
@@ -472,23 +245,19 @@ bool OptiCom::SplitMultipleOptiLightSerialData(String *dataIn, String *dataOut, 
 		if (convertToInt(data[0]) != MAGIC_NUMBER)
 		{
 			delete[] data;
-			Serial.println("Invalid data: no magic number (|)");
 			return false;
 		}
 
-		Serial.println(data[1]);
-
 		// 3. Return everything
 		*arrayLength = amountOfData;
-		dataOut = data;		
+		SingleOptiLightSerialData = data;
 
 		return true;
 	}
-	Serial.println("Invalid data: no | found");
 	return false;
 }
 
-bool OptiCom::SplitSensorCoilBlockOptiLightSerialData(String *dataIn, String *dataOut, int *arrayLength)
+bool OptiCom::SplitSensorCoilBlockOptiLightSerialData(String *dataIn, int *arrayLength)
 {
 	if (dataIn->indexOf("@") > 0) // = valid data
 	{
@@ -504,20 +273,19 @@ bool OptiCom::SplitSensorCoilBlockOptiLightSerialData(String *dataIn, String *da
 		if (convertToInt(data[0]) != MAGIC_NUMBER)
 		{
 			delete[] data;
-			Serial.print("[DEBUG] AFailed for: ");
-			Serial.println(*dataIn);
+			//Serial.print("[DEBUG] AFailed for: ");
+			//Serial.println(*dataIn);
 			return false;
 		}
 
 		// 3. Return everything
 		*arrayLength = amountOfData;
-		*dataOut = *data;		// Do not forget to clean!
-
+		SensorCoilBlockOptiLightSerialData = data;
 		return true;
 	}
 
-	Serial.print("[DEBUG] BFailed for: ");
-	Serial.println(*dataIn);
+	//Serial.print("[DEBUG] BFailed for: ");
+	//Serial.println(*dataIn);
 	return false;
 }
 
@@ -530,8 +298,8 @@ bool OptiCom::SplitSingleOptiLightSerialData(String *strData, double *vLow, doub
 
 		if (amountOfData < amountOfSerialData) // Is not enough data available?
 		{
-			Serial.print("[DEBUG] AFailed for: ");
-			Serial.println(*strData);
+			//Serial.print("[DEBUG] AFailed for: ");
+			//Serial.println(*strData);
 			return false;
 		}
 
@@ -543,8 +311,8 @@ bool OptiCom::SplitSingleOptiLightSerialData(String *strData, double *vLow, doub
 		// 2. Check magic number
 		if (convertToInt(data[0]) != MAGIC_NUMBER)
 		{
-			Serial.print("[DEBUG] BFailed for: ");
-			Serial.println(*strData);
+			//Serial.print("[DEBUG] BFailed for: ");
+			//Serial.println(*strData);
 			return false;
 		}
 
@@ -557,11 +325,10 @@ bool OptiCom::SplitSingleOptiLightSerialData(String *strData, double *vLow, doub
 
 		// 4. Clean and return
 		delete[] data;
-		Serial.println("[DEBUG] OK");
 		return true;
 	}
-	Serial.print("[DEBUG] CFailed for: ");
-	Serial.println(*strData);
+	//Serial.print("[DEBUG] CFailed for: ");
+	//Serial.println(*strData);
 	return false;
 }
 #pragma endregion

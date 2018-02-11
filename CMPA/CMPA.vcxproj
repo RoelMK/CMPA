@@ -88,7 +88,6 @@
     <ClInclude Include="LightSpeed.h" />
     <ClInclude Include="OptiCom.h" />
     <ClInclude Include="OptiLight.h" />
-    <ClInclude Include="OptiLightData.h" />
     <ClInclude Include="RealFET.h" />
     <ClInclude Include="SensorStateRegister.h" />
     <ClInclude Include="__vm\.CMPA.vsarduino.h" />
@@ -99,7 +98,6 @@
     <ClCompile Include="LightSpeed.cpp" />
     <ClCompile Include="OptiCom.cpp" />
     <ClCompile Include="OptiLight.cpp" />
-    <ClCompile Include="OptiLightData.cpp" />
     <ClCompile Include="RealFET.cpp" />
     <ClCompile Include="SensorStateRegister.cpp" />
   </ItemGroup>

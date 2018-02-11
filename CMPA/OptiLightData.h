@@ -11,21 +11,21 @@
 
 #include "LightSpeed.h"
 
-class OptiLightData
-{
-public:
-	OptiLightData();
-	OptiLightData(double vLow, int vHigh, double estimatedFETcloseTime, double highestAcceleration, int tries);
-	String ToString();
-
-	double VLow;
-	double VHigh;
-	double EstimatedFETcloseTime;
-	double HighestAcceleration;
-	int Tries;
-private:
-
-};
+//class OptiLightData
+//{
+//public:
+//	OptiLightData();
+//	OptiLightData(double vLow, int vHigh, double estimatedFETcloseTime, double highestAcceleration, int tries);
+//	String ToString();
+//
+//	double VLow;
+//	double VHigh;
+//	double EstimatedFETcloseTime;
+//	double HighestAcceleration;
+//	int Tries;
+//private:
+//
+//};
 
 #endif
 

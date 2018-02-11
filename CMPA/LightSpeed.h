@@ -64,15 +64,15 @@ private:
 	const int R2VoltageDividerResistance = 10000;		// Resistance of second resistor in voltage divider (in Ohm)
 
 	const int FAILED_NOISE_LOWDELTAMAXMIN = -1;				// Return: too much background light
-	const int minimalDeltaMaxMin = 50;						// If difference between UMax and UMin is less than this value, CMPA will show warning
+	const int minimalDeltaMaxMin = 50;						// If difference between UMax and UMin is less than this value, CMPA will show a warning
 	const int FAILED_NOISE_LOWDELTANOISEDETECT = -2;		// Return: too much noise
-	const int minimalDeltaNoiseDetect = 25;					// If difference between noise threshold and detection threshold is low than this value, CMPA will show warning
+	const int minimalDeltaNoiseDetect = 25;					// If difference between noise threshold and detection threshold is lower than this value, CMPA will show a warning
 	const int FAILED_LDRDELTA_HIGH = -3;					// Return: difference between two calibration readings is too high
-	const int calibrateDifferenceWarningThreshold = 150;	// If difference between two calibration readings is higher than this value, CMPA will show warning
+	const int calibrateDifferenceWarningThreshold = 150;	// If difference between two calibration readings is higher than this value, CMPA will show a warning
+	const int minimalResistanceLDR = 2500;					// Minimal resistance which a LDR should have (in Ohm). If it is higher, CMPA will show a warning
 
-	const int defaultNoise = 30;
-	const int maxDifferenceBetweenLightAndDark = 250;
-	const int minimalResistanceLDR = 2500;				// Minimal resistance which a LDR should have (in Ohm)
+	const int defaultNoise = 10;						// 'Default noise'
+	const int maxDifferenceBetweenLightAndDark = 200;	// Maximal difference between light and dark
 };
 
 

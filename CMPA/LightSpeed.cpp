@@ -31,16 +31,20 @@ int LightSpeed::Start()
 			if (maxValue[s] >= 1024)						// Check if data is usable
 			{
 				maxValue[s] = 0;
+				Serial.print("[Info] Received corrupt analog data, ignoring reading (LDR");
+				Serial.print(s);
+				Serial.println(")");
 			}
-
-			if (read > maxValue[s]) maxValue[s] = read;		// Set max value
-			int noise = abs(maxValue[s] - read);			// Calculate noise
-			
-			if (noise > sensorUNoise[s])
+			else
 			{
-				sensorUNoise[s] = noise;					// Set max noise
+				if (read > maxValue[s]) maxValue[s] = read;		// Set max value
+				int noise = abs(maxValue[s] - read);			// Calculate noise
+				if (noise > sensorUNoise[s])
+				{
+					sensorUNoise[s] = noise;					// Set max noise
+				}
+				readings[s] = readings[s] + read;				// Save reading
 			}
-			readings[s] = readings[s] + read;				// Save reading
 		}
 		delayMicroseconds(delayus);							// Delay
 	}

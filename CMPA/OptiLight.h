@@ -19,11 +19,12 @@ public:
 	void Init(OptiCom *optiComPNT);						// Init OptiLight
 	void Update();										// Update OptiLight
 	double GetFETOnTime(int FET, double speed);			// Estimate FET power time
+	double GetBackupFETOnTime(int FET, double speed);	// Estimate FET power time using data in backup
 private:
 	OptiCom *optiCom;									// Pointer to OptiCom
 	double GetPrimitiveTimeData(int FET, double speed);	// Get primitive FET power time (using speed/distance)
 
-	bool optiLightWorking;								// Is OptiLight working?
+	bool optiComWorking;								// Is OptiCom working?
 	const int speedLevels = 5;							// Number of 'speedLevels' ~ speed blocks
 	const double OptiLightConstants[5][3] = { { 0.0,1.0,0.10744 },{ 1.0,2.0,0.07020 },{ 2.0,3.0,0.05495 },{ 3.0,4.0,0.04533 },{ 4.0,5.0,0.03856 } };	// Constants
 	const int OPTILIGHT_VLOW = 0;						// VLow ID

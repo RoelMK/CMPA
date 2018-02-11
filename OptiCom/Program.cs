@@ -176,7 +176,7 @@ namespace OptiCom
                     {
                         if (File.Exists(OptiLightDataFile))
                         {
-                            Console.WriteLine("[PC] Reading and sending OptiCom data...");
+                            Console.WriteLine("[Info] Reading and sending OptiCom data...");
                             StreamReader rStream = new StreamReader(OptiLightDataFile);
                             string data = rStream.ReadLine();
                             ArduinoPort.Write(data);
