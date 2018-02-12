@@ -134,5 +134,12 @@ int FETController::GetEstimatedFETOnTime(int fet, double speed)
 
 int FETController::GetNextFET(int sensor)
 {
-	return sensor;
+	if (sensor == 15)
+	{
+		return 0;
+	}
+	else
+	{
+		return sensor + 1;
+	}
 }
