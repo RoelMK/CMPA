@@ -57,7 +57,7 @@ private:
 
 	// Calibration constants
 	const int LED_ONOFF_PIN = 18;						// Digital pin of LED transistor
-	const int LED_ONOFF_TIME = 10;						// Wait for the LEDs to turn on/off	(in ms)
+	const int LED_ONOFF_TIME = 100;						// Wait for the LEDs to turn on/off	(in ms)
 	const int ANALOGREAD_DELAY = 150;					// How long it takes to run analogRead (in us)	
 	const int calibrationReadings = 500;				// Number of calibration readings
 	const int calibrationResistorValue = 1120;			// Resistance of resistor in parallel with LED transistor (in Ohm)
@@ -71,8 +71,9 @@ private:
 	const int calibrateDifferenceWarningThreshold = 150;	// If difference between two calibration readings is higher than this value, CMPA will show a warning
 	const int minimalResistanceLDR = 2500;					// Minimal resistance which a LDR should have (in Ohm). If it is higher, CMPA will show a warning
 
+	const int maximalPartOfDeltaSensorIsNoise = 4;		// Maximal part of delta sensor is allowed to be noise
+	const int maximalNoise = 150;						// Maximal noise reading (corrupt if higher)
 	const int defaultNoise = 20;						// 'Default noise'
-	const double maximalExtraNoise = 20;				// Maximal EXTRA noise (above default noise)
 	const int maxDifferenceBetweenLightAndDark = 100;	// Maximal difference between light and dark (150...)
 };
 

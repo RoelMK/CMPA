@@ -41,6 +41,7 @@ int LightSpeed::Start()
 				int noise = abs(maxValue[s] - read);			// Calculate noise
 				if (noise > sensorUNoise[s])
 				{
+					if (noise > maximalNoise) noise = maximalNoise;
 					sensorUNoise[s] = noise;					// Set max noise
 				}
 				readings[s] = readings[s] + read;				// Save reading
@@ -115,14 +116,23 @@ int LightSpeed::Start()
 		{
 			deltaSensor = maxDifferenceBetweenLightAndDark;
 		}
-
-		if (sensorUNoise[s] > maximalExtraNoise)
+		
+		int maxNoise = deltaSensor / maximalPartOfDeltaSensorIsNoise;
+		if (defaultNoise > maxNoise)
 		{
-			sensorUNoise[s] = maximalExtraNoise;		// Set max noise
+			sensorUNoise[s] = maxNoise;
+		}
+		else
+		{
+			sensorUNoise[s] = sensorUNoise[s] + defaultNoise;
+			if (sensorUNoise[s] > maxNoise)
+			{
+				sensorUNoise[s] = maxNoise;
+			}
 		}
 
 		sensorDetectionThreshold[s] = sensorUMax[s] - ((deltaSensor) / 2);						// Calculate detection threshold
-		sensorNoiseThreshold[s] = sensorUMax[s] - sensorUNoise[s] - defaultNoise;				// Calculate noise threshold
+		sensorNoiseThreshold[s] = sensorUMax[s] - sensorUNoise[s];								// Calculate noise threshold
 		
 		Serial.print("LDR");
 		Serial.print(s);
