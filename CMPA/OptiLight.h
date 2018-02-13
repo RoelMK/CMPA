@@ -23,6 +23,7 @@ public:
 private:
 	OptiCom *optiCom;									// Pointer to OptiCom
 	double GetPrimitiveTimeData(int FET, double speed);	// Get primitive FET power time (using speed/distance)
+	double ImproveTimingForEntranceExit(int FET, double time);	// Improve timing for entrance / exit (always check)
 
 	bool optiComWorking;								// Is OptiCom working?
 	const int speedLevels = 5;							// Number of 'speedLevels' ~ speed blocks
@@ -30,9 +31,13 @@ private:
 	const int OPTILIGHT_VLOW = 0;						// VLow ID
 	const int OPTILIGHT_VHIGH = 1;						// VHigh ID
 	const int OPTILIGHT_ESTIMATED_FETOFF_TIME = 3;		// Estimated turn off time ID
+	const double ArtificalTimingMultiplicationFactor = 1;	// Artifically increase/decrease FET on time
 
 	// Distance between LDR and coil center
-	const double default_distance = 0.2628;			// All distances are in meters
+	const double FETAfterExit = 0;			// FET after entrance
+	const double FETAfterEntrance = 8;		// FET after exit
+	const double DEFAULT_DISTANCE_AFTER_ENTRANCEEXIT = 0.4228;	// Default distance between LDR and next coil when an entrance/exit is between
+	const double DEFAULT_DISTANCE = 0.2628;						// Default distance (no entrance / exit);
 
 	const double LDR0_DTNC = 0.4228;	// LDR0 = exit, DTNC = Distance to next coil (in m) R
 	const double LDR1_DTNC = 0.2628;	// L

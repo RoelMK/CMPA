@@ -15,9 +15,14 @@ namespace OptiCom
         // Modelling
         public const bool ExportToFile = false;                     // Export modelling data to file
         public const string FileToExportTo = "H:\\export.txt";      // File to export modelling data to 
-        private const int NumberOfFETs = 1;            // Number of FETs
+
+        private const int NumberOfFETs = 1;             // Number of FETs
         private const int TopSpeedCMPA = 5;             // Top speed CMPA (m/s)
-        private const double DeltaVLow_VHigh = 1;       // Difference between VLow and VHigh in OptiLight data
+        private const double DeltaVLow_VHigh = 0.1;     // Difference between VLow and VHigh in OptiLight data
+        private const double DistanceBetweenCoils = 0.2628;                 // Distance between two coils 
+        private const double DistanceBetweenCoils_ENTRANCE_EXIT = 0.4228;   // Distance between two coils when entrace / exit is between
+        private const int EntranceFET = 7;      // FET close to the entrance
+        private const int ExitFET = 15;         // FET close to the exit
 
         // Arduino communication
         private const string ArduinoPortName = "COM3";  // Name of serial port
@@ -50,7 +55,7 @@ namespace OptiCom
                         return;
                     }
 
-                    OptiLightGenerator generator = new OptiLightGenerator(NumberOfFETs, TopSpeedCMPA, DeltaVLow_VHigh);
+                    OptiLightGenerator generator = new OptiLightGenerator(NumberOfFETs, TopSpeedCMPA, DeltaVLow_VHigh, DistanceBetweenCoils, DistanceBetweenCoils_ENTRANCE_EXIT, EntranceFET, ExitFET);
                     bool generationResult = generator.Generate();
                     if(generationResult)
                     {

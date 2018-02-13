@@ -12,10 +12,15 @@ namespace OptiCom.Modelling
         private readonly int FETCount;              // Number of FETs
         private readonly double TopSpeed;           // Top speed, do not generate for speeds higher than this speed
         private readonly double LengthOfSpeedBlock; // 'Length' of a speed block (VHigh - VLow)
+        private readonly double DistanceBetweenCoils;                       // Distance between two coils
+        private readonly double DistanceBetweenCoilsWithEntraceOrExit;      // Distance between two coils when exit / entrance is between
+        private readonly int EntranceFET;   // FET which is close to the entrance
+        private readonly int ExitFET;       // FET which is close to the exit
+
 
         private List<FETOptiLightBlock> FETBlock = new List<FETOptiLightBlock>();   // Data / FET
 
-        public OptiLightGenerator(int fetCount, double topSpeed, double lengthOfSpeedBlock)
+        public OptiLightGenerator(int fetCount, double topSpeed, double lengthOfSpeedBlock, double distanceBetweenCoils, double distanceBetweenCoilsWithEntraceOrExit, int entranceFET, int exitFET)
         {
             FETCount = fetCount;
             for(int i = 0; i < fetCount; i++)
@@ -24,6 +29,10 @@ namespace OptiCom.Modelling
             }
             TopSpeed = topSpeed;
             LengthOfSpeedBlock = lengthOfSpeedBlock;
+            DistanceBetweenCoils = distanceBetweenCoils;
+            DistanceBetweenCoilsWithEntraceOrExit = distanceBetweenCoilsWithEntraceOrExit;
+            EntranceFET = entranceFET;
+            ExitFET = exitFET;
         }
 
         /// <summary>
@@ -43,10 +52,20 @@ namespace OptiCom.Modelling
                 {
                     //Console.WriteLine("");
                     //Console.WriteLine(">> Start speed: " + v.ToString() + " m/s");
-                    
+
 
                     // Run model
-                    Model model = new Model(new ModelData(), (v + v + LengthOfSpeedBlock) / 2);     // Create model object, set start speed
+                    double distance;
+                    if (f == EntranceFET || f == ExitFET)
+                    {
+                        distance = DistanceBetweenCoilsWithEntraceOrExit;
+                    }
+                    else
+                    {
+                        distance = DistanceBetweenCoils;
+                    }
+
+                    Model model = new Model(new ModelData(distance), (v + v + LengthOfSpeedBlock) / 2);     // Create model object, set start speed
                     model.Start(false);
                     while(!model.IsFinished)
                     {
@@ -77,7 +96,7 @@ namespace OptiCom.Modelling
         /// <returns>OptiCom string</returns>
         public string GetOptiLightDataArrayInOptiComFormat()
         {
-            string toReturn = "";
+            string toReturn = MAGIC_NUMBER;
 
             for(int f =0; f<FETCount;f++)
             {
@@ -102,8 +121,7 @@ namespace OptiCom.Modelling
 
         public override string ToString()
         {
-            string toReturn = "";
-            string.Join(",", SpeedData);
+            string toReturn = OptiLightGenerator.MAGIC_NUMBER;
             for (int s = 0; s < SpeedData.Count; s++)
             {
                 toReturn += ("@" + SpeedData[s].ToString());

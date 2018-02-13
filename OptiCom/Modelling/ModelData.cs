@@ -16,9 +16,9 @@ namespace OptiCom.Modelling
         public readonly double ResistivityCopper = 1.75e-5;
 
         public readonly double DistanceBetweenCoilCores;                // AUTO
-        public readonly double DistanceBetweenPreviousCoilCoreAndLDR = 0.015;   // m
+        public readonly double DistanceBetweenPreviousCoilCoreAndLDR = 0.02;   // m
         public readonly double RadiusAccelerationTube;                  // AUTO
-        public readonly double LengthAccelerationTube = 4;         // m
+        public readonly double LengthAccelerationTube = 4.71;         // m
         public readonly double NumberOfCoils = 16;                   
         public readonly double ExtraLengthAccelerationTube = 0.2;    // m
 
@@ -31,11 +31,11 @@ namespace OptiCom.Modelling
         public readonly double CoilLength = 26.4;         // mm
         public readonly double CoilVoltage = 12;        // V
         public readonly double CoilPowerFormulaCorrection = 0.01;   // m
-        public readonly double CurrentTo0Time = 1.24e-03;    // s old: 3.4e-03
+        public readonly double CurrentTo0Time = 3e-03;    // s old: 1.24e-03
 
         public readonly double SurfaceProjectile;       // AUTO
-        public readonly double DiameterProjectile = 0.018;  // m 0.018
-        public readonly double WeightProjectile = 0.033;    // kg 0.033
+        public readonly double DiameterProjectile = 0.010;  // m 0.018
+        public readonly double WeightProjectile = 0.0042;    // kg 0.033
         public readonly double RollingResistanceCoefficient = 0.02;
         public readonly double AirResistanceCoefficient = 0.5;
         public readonly double KValue;  // AUTO
@@ -49,11 +49,11 @@ namespace OptiCom.Modelling
         public TimeCurrent TimeCurrentDecrease;
 
 
-        public ModelData()
+        public ModelData(double distanceBetweenCoilCores)
         {
             // Set constants
             RadiusAccelerationTube = (LengthAccelerationTube + ExtraLengthAccelerationTube) / (2 * Math.PI);
-            DistanceBetweenCoilCores = LengthAccelerationTube / NumberOfCoils;
+            DistanceBetweenCoilCores = distanceBetweenCoilCores; // LengthAccelerationTube / NumberOfCoils;
             //DistanceBetweenPreviousCoilCoreAndLDR = DistanceBetweenCoilCores / 2;
 
             DiameterTube = ThicknessTubeWall * 2 + DiameterProjectile + ExtraDiameterTube;
