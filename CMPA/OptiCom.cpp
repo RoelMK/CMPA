@@ -38,11 +38,11 @@ bool OptiCom::GetData(double speed, double *estimatedFETOffTime, double *highest
 	{
 		for (int i = 0; i < NumberOfSpeedBlocks; i++)
 		{
-			Serial.print(VLow[i]);
-			Serial.print(" - ");
-			Serial.print(VHigh[i]);
-			Serial.print(": ");
-			Serial.println(EstimatedFETOffTime[i]);
+			//Serial.print(VLow[i]);
+			//Serial.print(" - ");
+			//Serial.print(VHigh[i]);
+			//Serial.print(": ");
+			//Serial.println(EstimatedFETOffTime[i]);
 			// Yes: return data for correct speed
 			if (speed >= VLow[i] && speed < VHigh[i])
 			{

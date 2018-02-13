@@ -92,7 +92,7 @@ void RealFET::SwitchPIN(int fet, uint8_t state)
 {
 	if (state == HIGH)
 	{
-		Serial.print("Powering FET: ");
+		Serial.print("[INFO] Powering FET: ");
 		Serial.println(fet);
 	}
 	

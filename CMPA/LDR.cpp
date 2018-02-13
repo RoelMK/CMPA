@@ -41,9 +41,9 @@ int LDR::Update(unsigned long time)
 		ssr->SensorDetection = lightSpeed->GetSensor();
 		ssr->LastSpeed = lightSpeed->GetSpeed();
 
-		Serial.print("Detected: ");
+		Serial.print("[INFO] Detected: ");
 		Serial.println(lightSpeed->GetSensor());
-		Serial.print("Speed: ");
+		Serial.print("[INFO] Speed: ");
 		Serial.println(lightSpeed->GetSpeed());
 
 		return LDR_SENSOR_OK;
