@@ -312,13 +312,13 @@ namespace OptiCom.Modelling
         {
             if(FETOpen)
             {
-                return data.TimeCurrentIncrease.GetCurrent(timeFETopen);
+                return data.TimeCurrentIncrease.GetCurrent(timeFETopen) * data.CoilCurrentCorrectionFactor;
             }
             else
             {
                 if(!FETNeverON)
                 {
-                    return data.TimeCurrentDecrease.GetCurrent(timeFETclosed);
+                    return data.TimeCurrentDecrease.GetCurrent(timeFETclosed) * data.CoilCurrentCorrectionFactor;
                 }
                 else
                 {

@@ -114,6 +114,8 @@ void FETController::UpdateTimer(unsigned long time)
 
 			if (timeToWaitBeforeTurningOffFET <= 0)				// Should FET be switched off?
 			{
+				Serial.print("Switching off FET: ");
+				Serial.println(realFET->FETPowered);
 				realFET->SwitchFET(realFET->FETPowered, LOW);	// Switch off FET
 				timeToWaitBeforeTurningOffFET = 0;				// Reset
 			}

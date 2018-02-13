@@ -16,7 +16,7 @@ bool OptiCom::Init()
 	// Init data and return
 	if (result)
 	{
-		Serial.print("[INFO] Updating local data");
+		Serial.println("[INFO] Updating local data");
 		return UpdateLocalData(&response);
 	}
 	else

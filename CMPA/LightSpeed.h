@@ -71,7 +71,7 @@ private:
 	const int calibrateDifferenceWarningThreshold = 150;	// If difference between two calibration readings is higher than this value, CMPA will show a warning
 	const int minimalResistanceLDR = 2500;					// Minimal resistance which a LDR should have (in Ohm). If it is higher, CMPA will show a warning
 
-	const int defaultNoise = 10;						// 'Default noise'
+	const int defaultNoise = 30;						// 'Default noise'
 	const int maxDifferenceBetweenLightAndDark = 100;	// Maximal difference between light and dark (150...)
 };
 
