@@ -100,6 +100,7 @@ void FETController::UpdateTimer(unsigned long time)
 	{
 		// Yes: check and update how long to wait before turning on FET
 		timeToWaitBeforeTurningOnFET -= deltaTime;
+		timeToWaitBeforeTurningOffFET -= deltaTime;
 
 		if (timeToWaitBeforeTurningOnFET <= 0)		// Should FET be powered?
 		{

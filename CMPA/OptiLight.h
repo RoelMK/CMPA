@@ -31,7 +31,7 @@ private:
 	const int OPTILIGHT_VLOW = 0;						// VLow ID
 	const int OPTILIGHT_VHIGH = 1;						// VHigh ID
 	const int OPTILIGHT_ESTIMATED_FETOFF_TIME = 3;		// Estimated turn off time ID
-	const double ArtificalTimingMultiplicationFactor = 2;	// Artifically increase/decrease FET on time
+	const double ArtificalTimingMultiplicationFactor = 1.58;	// Artifically increase/decrease FET on time
 
 	// Distance between LDR and coil center
 	const double FETAfterExit = 0;			// FET after entrance
