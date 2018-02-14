@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -41,7 +42,8 @@ namespace OptiCom.Modelling
         public bool Generate()
         {
             Console.WriteLine(">> Generating OptiLight data...");
-
+            StreamWriter wStream = new StreamWriter(Program.FileToExportTo);
+            wStream.WriteLine("startspeed time topspeed distance");
             // For every FET
             for(int f = 0; f < FETCount;f++)
             {
@@ -76,16 +78,21 @@ namespace OptiCom.Modelling
                     // Failed?
                     if(model.IsFailed || model.ModelResult.EstimatedFETOffTime == 0)
                     {
+                        wStream.Close();
                         return false;
                     }
                     else
                     {
                         FETBlock[f].SpeedData.Add(new OptiLightData(v, v + LengthOfSpeedBlock, model.ModelResult.EstimatedFETOffTime));
+
+                        double speed = (v + v + LengthOfSpeedBlock) / 2;
+                        wStream.WriteLine(speed + " " + (int)(model.ModelResult.EstimatedFETOffTime * 1000) + " " + model.Speed + " " + model.Distance);
                     }
                 }
             }
 
             // Ready
+            wStream.Close();
             Console.WriteLine(">> OptiLight data ready!");
             return true;
         }

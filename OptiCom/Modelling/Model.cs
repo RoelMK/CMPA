@@ -45,7 +45,9 @@ namespace OptiCom.Modelling
         {
             data = _data;
             startSpeed = _startSpeed;
-            targetTime = 1;
+            //position = data.DistanceBetweenPreviousCoilCoreAndLDR - 0.0001;
+            //distance = data.DistanceBetweenPreviousCoilCoreAndLDR - 0.0001;
+            targetTime = 4;
             isModelInModel = false;
             modelTask = new Task(Modeling);
         }
@@ -143,6 +145,14 @@ namespace OptiCom.Modelling
             }
         }
 
+        public double Distance
+        {
+            get
+            {
+                return distance;
+            }
+        }
+
         /// <summary>
         /// Modeling
         /// </summary>
@@ -232,9 +242,12 @@ namespace OptiCom.Modelling
                 acceleration = nettoForce / data.WeightProjectile;
 
                 // Check if model is finished & return if it is finished
-                if(!FETNeverON && !FETOpen && !isModelInModel)
+                if(!FETNeverON && !FETOpen && !isModelInModel && result == null)
                 {
-                    result = new ModelResult(startSpeed, t);
+                    result = new ModelResult(startSpeed, t);    // Continue until next detection, but set result
+                }
+                else if(!FETNeverON && FETOpen && !isModelInModel && result != null)
+                {
                     break;
                 }
             }
@@ -337,6 +350,11 @@ namespace OptiCom.Modelling
             if(gap < data.CoilPowerFormulaCorrection)
             {
                 gap = data.CoilPowerFormulaCorrection;
+            }
+            else if (gap > data.MinGapNoCoilForceImpact)
+            {
+                //gap = gap * 1/Math.Pow((data.GapNoImpactDistance / gap), 2);
+                gap = gap * Math.Pow((gap / data.MinGapNoCoilForceImpact), 3.2);
             }
 
             if(position < data.DistanceBetweenPreviousCoilCoreAndLDR && rotations > 0)    // position < (0.1 * data.DistanceBetweenCoilCores)

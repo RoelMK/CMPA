@@ -36,7 +36,7 @@ namespace OptiCom.Modelling
         public readonly double SurfaceProjectile;       // AUTO
         public readonly double DiameterProjectile = 0.010;  // m 0.018
         public readonly double WeightProjectile = 0.0042;    // kg 0.033
-        public readonly double RollingResistanceCoefficient = 0.5;
+        public readonly double RollingResistanceCoefficient = 0.05;
         public readonly double AirResistanceCoefficient = 0.5;
         public readonly double KValue;  // AUTO
 
@@ -45,7 +45,8 @@ namespace OptiCom.Modelling
         public readonly double ExtraDiameterTube = 0.002;   // m
         public readonly double AirTightness = 1.293;   // kg/m³ (90% vac)
 
-        public readonly double CoilCurrentCorrectionFactor = 0.1;
+        public readonly double CoilCurrentCorrectionFactor = 0.2;
+        public readonly double MinGapNoCoilForceImpact = 0.045;
 
         public TimeCurrent TimeCurrentIncrease;
         public TimeCurrent TimeCurrentDecrease;
