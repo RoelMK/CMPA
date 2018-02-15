@@ -53,7 +53,7 @@ private:
 	int sensorDetection;						// FET to turn on
 
 	// Length of LDR
-	const double LDRlength = 0.015;				// In meters, short-axis (source: https://www.vanallesenmeer.nl/LDR-5528)
+	const double LDRlength = 0.016;				// In meters, short-axis (source: https://www.vanallesenmeer.nl/LDR-5528)
 
 	// Calibration constants
 	const int LED_ONOFF_PIN = 18;						// Digital pin of LED transistor
@@ -71,10 +71,10 @@ private:
 	const int calibrateDifferenceWarningThreshold = 150;	// If difference between two calibration readings is higher than this value, CMPA will show a warning
 	const int minimalResistanceLDR = 2500;					// Minimal resistance which a LDR should have (in Ohm). If it is higher, CMPA will show a warning
 
-	const int maximalPartOfDeltaSensorIsNoise = 4;		// Maximal part of delta sensor is allowed to be noise
-	const int maximalNoise = 150;						// Maximal noise reading (corrupt if higher)
+	const int maximalPartOfDeltaSensorIsNoise = 0.25;		// Maximal part of delta sensor is allowed to be noise
+	const int maximalNoise = 50;						// Maximal noise reading (corrupt if higher)
 	const int defaultNoise = 20;						// 'Default noise'
-	const int maxDifferenceBetweenLightAndDark = 100;	// Maximal difference between light and dark (150...)
+	const int maxDifferenceBetweenLightAndDark = 75;	// Maximal difference between light and dark (150...)
 };
 
 

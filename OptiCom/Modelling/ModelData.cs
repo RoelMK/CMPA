@@ -34,8 +34,8 @@ namespace OptiCom.Modelling
         public readonly double CurrentTo0Time = 3e-03;    // s old: 1.24e-03
 
         public readonly double SurfaceProjectile;       // AUTO
-        public readonly double DiameterProjectile = 0.010;  // m 0.018
-        public readonly double WeightProjectile = 0.0042;    // kg 0.033
+        public readonly double DiameterProjectile = 0.016;  // m 0.018
+        public readonly double WeightProjectile = 0.018;    // kg 0.033
         public readonly double RollingResistanceCoefficient = 0.05;
         public readonly double AirResistanceCoefficient = 0.5;
         public readonly double KValue;  // AUTO
