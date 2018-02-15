@@ -72,9 +72,9 @@ private:
 	const int minimalResistanceLDR = 2500;					// Minimal resistance which a LDR should have (in Ohm). If it is higher, CMPA will show a warning
 
 	const int maximalPartOfDeltaSensorIsNoise = 0.25;		// Maximal part of delta sensor is allowed to be noise
-	const int maximalNoise = 50;						// Maximal noise reading (corrupt if higher)
+	const int maximalNoise = 60;						// Maximal noise reading (corrupt if higher)
 	const int defaultNoise = 20;						// 'Default noise'
-	const int maxDifferenceBetweenLightAndDark = 75;	// Maximal difference between light and dark (150...)
+	const int maxDifferenceBetweenLightAndDark = 80;	// Maximal difference between light and dark (150...)
 };
 
 

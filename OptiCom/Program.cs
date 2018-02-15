@@ -85,7 +85,7 @@ namespace OptiCom
             watch.Start();  // Start stopwatch
             logger = new StreamWriter(DateTime.Now.ToString("ddMMyyyy.HHmmss") + ".log", true); // Set logger
             logger.AutoFlush = true;
-            speedLogger = new StreamWriter(DateTime.Now.ToString("speed_ddMMyyyy.HHmmss") + ".log", true);
+            speedLogger = new StreamWriter("speed_" + DateTime.Now.ToString("ddMMyyyy.HHmmss") + ".log", true);
             speedLogger.AutoFlush = true;
 
             // Open serial port
@@ -222,14 +222,14 @@ namespace OptiCom
                 }
                 else
                 {
-                    Console.WriteLine(watch.Elapsed.Seconds + " " + serialData);
+                    Console.WriteLine(watch.ElapsedMilliseconds + " " + serialData);
                     if(logger != null)
                     {
-                        logger.WriteLine(watch.Elapsed.Seconds + " " + serialData);
+                        logger.WriteLine(watch.ElapsedMilliseconds + " " + serialData);
                     }
                     if(speedLogger != null && serialData.Contains("[INFO] Speed: "))
                     {
-                        speedLogger.WriteLine(watch.Elapsed.Seconds + " " + serialData.Replace("[INFO] Speed: ", ""));
+                        speedLogger.WriteLine(watch.ElapsedMilliseconds + " " + serialData.Replace("[INFO] Speed: ", ""));
                     }
                 }
             }
