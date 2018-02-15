@@ -31,6 +31,12 @@ namespace OptiCom
         private static SerialPort ArduinoPort = new SerialPort(ArduinoPortName, ArduinoBitRate);       // Arduino serial port properties
         private static readonly string OptiLightDataFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OptiLightData.ini";    // Folder to save OptiLight data
 
+
+        // Logging
+        private static Stopwatch watch = new Stopwatch();   // Watch
+        private static StreamWriter logger;                 // Normal logger
+        private static StreamWriter speedLogger;            // Speed only logger
+
         /// <summary>
         /// Main
         /// </summary>
@@ -38,7 +44,7 @@ namespace OptiCom
         static void Main(string[] args)
         {
             // Check for command to generate OptiLight data
-            if(args.Length > 0)
+            if (args.Length > 0)
             {
                 if(args[0] == "-g" && args.Length > 1)
                 {
@@ -76,6 +82,11 @@ namespace OptiCom
 
             // Start OptiCom
             Console.WriteLine("[INFO] Opening serial port...");
+            watch.Start();  // Start stopwatch
+            logger = new StreamWriter(DateTime.Now.ToString("ddMMyyyy.HHmmss") + ".log", true); // Set logger
+            logger.AutoFlush = true;
+            speedLogger = new StreamWriter(DateTime.Now.ToString("speed_ddMMyyyy.HHmmss") + ".log", true);
+            speedLogger.AutoFlush = true;
 
             // Open serial port
             try
@@ -96,6 +107,8 @@ namespace OptiCom
                     Console.Clear();
                     Main(args);
                 }
+                logger.Close();
+                speedLogger.Close();
                 return;
             }
 
@@ -132,6 +145,8 @@ namespace OptiCom
                     bool retry = PrintError("[ERROR] Failed to close serial port!", true);
                     if (!retry)
                     {
+                        logger.Close();
+                        speedLogger.Close();
                         return;
                     }
                 }
@@ -150,6 +165,8 @@ namespace OptiCom
             {
                 Process.Start(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
             }
+            logger.Close();
+            speedLogger.Close();
             return;
         }
 
@@ -160,7 +177,6 @@ namespace OptiCom
 
         //private static bool receivingSerialData;        // Received serial data
         //private static string serialDataReceived;       // Is receiving serial data?
-
         /// <summary>
         /// Receive serial data
         /// </summary>
@@ -181,7 +197,7 @@ namespace OptiCom
                     {
                         if (File.Exists(OptiLightDataFile))
                         {
-                            Console.WriteLine("[Info] Reading and sending OptiCom data...");
+                            Console.WriteLine("[INFO] Reading and sending OptiCom data...");
                             StreamReader rStream = new StreamReader(OptiLightDataFile);
                             string data = rStream.ReadLine();
                             ArduinoPort.Write(data);
@@ -206,7 +222,15 @@ namespace OptiCom
                 }
                 else
                 {
-                    Console.WriteLine(serialData);
+                    Console.WriteLine(watch.Elapsed.Seconds + " " + serialData);
+                    if(logger != null)
+                    {
+                        logger.WriteLine(watch.Elapsed.Seconds + " " + serialData);
+                    }
+                    if(speedLogger != null && serialData.Contains("[INFO] Speed: "))
+                    {
+                        speedLogger.WriteLine(watch.Elapsed.Seconds + " " + serialData.Replace("[INFO] Speed: ", ""));
+                    }
                 }
             }
             catch (Exception)
@@ -214,73 +238,6 @@ namespace OptiCom
                 Console.WriteLine("[WARNING] Serial I/O error");
                 return;
             }
-
-
-            //// Check data
-            //if (serialData.StartsWith("$") && serialData.EndsWith("#"))
-            //{
-            //    serialDataReceived = serialData;
-            //    receivingSerialData = false;
-            //    executeSerialInput = true;
-            //}
-            //else if (serialData.StartsWith("$"))
-            //{
-            //    receivingSerialData = true;
-            //    serialDataReceived = serialData;
-            //}
-            //else if (receivingSerialData)
-            //{
-            //    serialDataReceived += serialData;
-            //    if (serialData.EndsWith("#"))
-            //    {
-            //        receivingSerialData = false;
-            //        executeSerialInput = true;
-            //    }
-            //}
-            //else
-            //{
-            //    Console.WriteLine("[DEBUG] " + serialData);
-            //}
-
-            //// Execute serial input commands or print serial input
-            //if (executeSerialInput)
-            //{
-            //    string executeData = serialDataReceived.Replace("$", "");
-            //    executeData = executeData.Replace("#", "");
-
-            //    if (executeData.Contains("*"))
-            //    {
-            //        if (executeData.Contains("G%"))
-            //        {
-            //            if (File.Exists(OptiLightDataFile))
-            //            {
-            //                StreamReader rStream = new StreamReader(OptiLightDataFile);
-            //                string data = rStream.ReadLine();
-            //                ArduinoPort.Write(data);
-            //                rStream.Close();
-            //            }
-            //            else
-            //            {
-            //                ArduinoPort.Write("NODATA");
-            //            }
-            //        }
-            //        else if (executeData.Contains("S%"))
-            //        {
-            //            string dataToWrite = executeData.Replace("*S%", "");
-            //            WriteOptiLightData(dataToWrite);
-            //            ArduinoPort.Write("SETOK");
-
-            //        }
-            //        else
-            //        {
-            //            Console.WriteLine("Received unknown OptiCom command");
-            //        }
-            //    }
-            //    else
-            //    {
-            //        Console.WriteLine(executeData);
-            //    }
-            //}
         }
 
         /// <summary>
