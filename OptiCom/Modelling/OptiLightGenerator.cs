@@ -104,11 +104,12 @@ namespace OptiCom.Modelling
         public string GetOptiLightDataArrayInOptiComFormat()
         {
             string toReturn = MAGIC_NUMBER;
+            toReturn = "";
 
             for(int f =0; f<FETCount;f++)
             {
-                toReturn += ("|" + FETBlock[f].ToString());
-                //toReturn += "{" + FETBlock[f].ToString() + "},";
+                //toReturn += ("|" + FETBlock[f].ToString());
+                toReturn += "{" + FETBlock[f].ToString() + "},";
             }
 
             toReturn.Remove(toReturn.Length - 1);
@@ -129,10 +130,11 @@ namespace OptiCom.Modelling
         public override string ToString()
         {
             string toReturn = OptiLightGenerator.MAGIC_NUMBER;
+            toReturn = "";
             for (int s = 0; s < SpeedData.Count; s++)
             {
-                toReturn += ("@" + SpeedData[s].ToString());
-                //toReturn += "{" + SpeedData[s].ToString() + "},";
+                //toReturn += ("@" + SpeedData[s].ToString());
+                toReturn += "{" + SpeedData[s].ToString() + "},";
             }
             toReturn.Remove(toReturn.Length - 1);
             return toReturn;

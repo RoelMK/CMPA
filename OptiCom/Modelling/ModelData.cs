@@ -45,7 +45,7 @@ namespace OptiCom.Modelling
         public readonly double ExtraDiameterTube = 0.002;   // m
         public readonly double AirTightness = 1.293;   // kg/m³ (90% vac)
 
-        public readonly double CoilCurrentCorrectionFactor = 1;
+        public readonly double CoilCurrentCorrectionFactor = 0.9;
         public readonly double MinGapNoCoilForceImpact = 0.10;
         public readonly double TimeMultiplier = 1.0;
         
