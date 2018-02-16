@@ -31,7 +31,6 @@ private:
 	const int OPTILIGHT_VLOW = 0;						// VLow ID
 	const int OPTILIGHT_VHIGH = 1;						// VHigh ID
 	const int OPTILIGHT_ESTIMATED_FETOFF_TIME = 3;		// Estimated turn off time ID
-	const double ArtificalTimingMultiplicationFactor = 1;	// Artifically increase/decrease FET on time
 
 	// Distance between LDR and coil center
 	const double FETAfterExit = 0;			// FET after entrance
@@ -55,6 +54,12 @@ private:
 	const double LDR13_DTNC = 0.2628;	// R
 	const double LDR14_DTNC = 0.2628;	// R
 	const double LDR15_DTNC = 0.2628;	// R
+
+	// ARTM: Artifical Timing Multiplication Factor = correction of CMPAModelling data
+	double GetArtificalTimingMultiplicationFactor (int FET, double modelData);
+	const double DEFAULT_ARTM = 1;
+	const bool ARTMF_FET_ENABLED[FETCount] = {false,false,false ,false ,false ,false ,false ,false ,false ,false ,false ,false ,false ,false ,false ,false };
+	const double ARTMF_FET[FETCount] = { 1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0 };
 };
 
 #endif

@@ -40,7 +40,7 @@ double OptiLight::GetFETOnTime(int FET, double speed)
 		bool result = optiCom->GetData(speed, &estimatedTime);
 
 		// Return
-		if (result && estimatedTime > 0) return ImproveTimingForEntranceExit(FET, estimatedTime) * ArtificalTimingMultiplicationFactor;
+		if (result && estimatedTime > 0) return ImproveTimingForEntranceExit(FET, estimatedTime) * GetArtificalTimingMultiplicationFactor(FET, estimatedTime);
 	}
 
 	Serial.print("[WARNING] Failed to load OptiCom data for FET");
@@ -60,7 +60,7 @@ double OptiLight::GetBackupFETOnTime(int FET, double speed)
 			// Yes: return data for correct speed
 			if (speed >= OptiLightConstants[i][OPTILIGHT_VLOW] && speed < OptiLightConstants[i][OPTILIGHT_VHIGH])
 			{
-				return ImproveTimingForEntranceExit(FET, OptiLightConstants[i][OPTILIGHT_ESTIMATED_FETOFF_TIME]) * ArtificalTimingMultiplicationFactor;
+				return ImproveTimingForEntranceExit(FET, OptiLightConstants[i][OPTILIGHT_ESTIMATED_FETOFF_TIME]) * GetArtificalTimingMultiplicationFactor(FET, OptiLightConstants[i][OPTILIGHT_ESTIMATED_FETOFF_TIME]);
 			}
 			// Failed to find OptiLight data, return primitive data
 			Serial.print("[WARNING] Failed to load OptiLight data for FET");
@@ -77,7 +77,26 @@ double OptiLight::GetBackupFETOnTime(int FET, double speed)
 		Serial.print(FET);
 		Serial.print(", speed: ");
 		Serial.println(speed);
-		return ImproveTimingForEntranceExit(FET, OptiLightConstants[speedLevels - 1][OPTILIGHT_ESTIMATED_FETOFF_TIME]) * ArtificalTimingMultiplicationFactor;
+		return ImproveTimingForEntranceExit(FET, OptiLightConstants[speedLevels - 1][OPTILIGHT_ESTIMATED_FETOFF_TIME]) * GetArtificalTimingMultiplicationFactor(FET, OptiLightConstants[speedLevels - 1][OPTILIGHT_ESTIMATED_FETOFF_TIME]);
+	}
+}
+
+double OptiLight::GetArtificalTimingMultiplicationFactor(int FET, double modelData)
+{
+	if (FET < FETCount)
+	{
+		if (ARTMF_FET_ENABLED[FET])
+		{
+			return ARTMF_FET[FET];
+		}
+		else
+		{
+			return DEFAULT_ARTM;
+		}
+	}
+	else
+	{
+		return DEFAULT_ARTM;
 	}
 }
 
