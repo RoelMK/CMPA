@@ -11,7 +11,7 @@ void OptiLight::Init(OptiCom *optiComPNT)
 	bool result = false;	// Disable OptiCom (Arduino MEGA does not have enough RAM to use it properly)
 	if (!result)
 	{
-		Serial.println("[INFO] Failed to load OptiLight data");
+		Serial.println("[INFO] Failed to load OptiCom data or OptiCom is disabled");
 		optiComWorking = false;
 	}
 	else
@@ -63,13 +63,13 @@ double OptiLight::GetBackupFETOnTime(int FET, double speed)
 			{
 				return ImproveTimingForEntranceExit(FET, OptiLightConstants[i][OPTILIGHT_ESTIMATED_FETOFF_TIME]) * GetArtificalTimingMultiplicationFactor(FET, OptiLightConstants[i][OPTILIGHT_ESTIMATED_FETOFF_TIME]);
 			}
-			// Failed to find OptiLight data, return primitive data
-			Serial.print("[WARNING] Failed to load OptiLight data for FET");
-			Serial.print(FET);
-			Serial.print(", speed: ");
-			Serial.println(speed);
-			return GetPrimitiveTimeData(FET, speed);
 		}
+		// Failed to find OptiLight data, return primitive data
+		Serial.print("[WARNING] Failed to load OptiLight data for FET");
+		Serial.print(FET);
+		Serial.print(", speed: ");
+		Serial.println(speed);
+		return GetPrimitiveTimeData(FET, speed);
 	}
 	else
 	{
@@ -84,19 +84,25 @@ double OptiLight::GetBackupFETOnTime(int FET, double speed)
 
 double OptiLight::GetArtificalTimingMultiplicationFactor(int FET, double modelData)
 {
-	if (FET < FETCount || 1==1)
+	if (FET < FETCount)
 	{
 		if (ARTMF_FET_ENABLED[FET])
 		{
+			Serial.print("[INFO] ARTM: ");
+			Serial.println(ARTMF_FET[FET]);
 			return ARTMF_FET[FET];
 		}
 		else
 		{
+			Serial.print("[INFO] ARTM: ");
+			Serial.println(DEFAULT_ARTM);
 			return DEFAULT_ARTM;
 		}
 	}
 	else
 	{
+		Serial.print("[INFO] ARTM: ");
+		Serial.println(DEFAULT_ARTM);
 		return DEFAULT_ARTM;
 	}
 }
