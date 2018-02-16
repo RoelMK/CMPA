@@ -117,7 +117,7 @@ int LightSpeed::Start()
 			deltaSensor = maxDifferenceBetweenLightAndDark;
 		}
 		
-		int maxNoise = deltaSensor * maximalPartOfDeltaSensorIsNoise;
+		int maxNoise = deltaSensor / maximalPartOfDeltaSensorIsNoise;
 		if (defaultNoise > maxNoise)
 		{
 			sensorUNoise[s] = maxNoise;

@@ -7,7 +7,8 @@
 void OptiLight::Init(OptiCom *optiComPNT)
 {
 	optiCom = optiComPNT;
-	bool result = optiCom->Init();	// Start OptiCom
+	//bool result = optiCom->Init();	// Start OptiCom
+	bool result = false;	// Disable OptiCom (Arduino MEGA does not have enough RAM to use it properly)
 	if (!result)
 	{
 		Serial.println("[INFO] Failed to load OptiLight data");
@@ -41,12 +42,12 @@ double OptiLight::GetFETOnTime(int FET, double speed)
 
 		// Return
 		if (result && estimatedTime > 0) return ImproveTimingForEntranceExit(FET, estimatedTime) * GetArtificalTimingMultiplicationFactor(FET, estimatedTime);
+		Serial.print("[WARNING] Failed to load OptiCom data for FET");
+		Serial.print(FET);
+		Serial.print(", speed: ");
+		Serial.println(speed);
 	}
 
-	Serial.print("[WARNING] Failed to load OptiCom data for FET");
-	Serial.print(FET);
-	Serial.print(", speed: ");
-	Serial.println(speed);
 	return GetBackupFETOnTime(FET, speed);
 }
 
@@ -83,7 +84,7 @@ double OptiLight::GetBackupFETOnTime(int FET, double speed)
 
 double OptiLight::GetArtificalTimingMultiplicationFactor(int FET, double modelData)
 {
-	if (FET < FETCount)
+	if (FET < FETCount || 1==1)
 	{
 		if (ARTMF_FET_ENABLED[FET])
 		{
