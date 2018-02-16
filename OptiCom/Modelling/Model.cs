@@ -244,7 +244,7 @@ namespace OptiCom.Modelling
                 // Check if model is finished & return if it is finished
                 if(!FETNeverON && !FETOpen && !isModelInModel && result == null)
                 {
-                    result = new ModelResult(startSpeed, t);    // Continue until next detection, but set result
+                    result = new ModelResult(startSpeed, t * data.TimeMultiplier);    // Continue until next detection, but set result
                 }
                 else if(!FETNeverON && FETOpen && !isModelInModel && result != null)
                 {
@@ -354,7 +354,7 @@ namespace OptiCom.Modelling
             else if (gap > data.MinGapNoCoilForceImpact)
             {
                 //gap = gap * 1/Math.Pow((data.GapNoImpactDistance / gap), 2);
-                gap = gap * Math.Pow((gap / data.MinGapNoCoilForceImpact), 3.2);
+                //gap = gap * Math.Pow((gap / data.MinGapNoCoilForceImpact), 1);
             }
 
             if(position < data.DistanceBetweenPreviousCoilCoreAndLDR && rotations > 0)    // position < (0.1 * data.DistanceBetweenCoilCores)
